@@ -1,3 +1,59 @@
+// Enable Tooltips
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+const PARAM = {
+  ORIENTATION_A: 'Orientation_a',
+  ORIENTATION_B: 'Orientation_b',
+  ORIENTATION_G: 'Orientation_g',
+  ACCELEROMETER_X: 'Accelerometer_x', 
+  ACCELEROMETER_Y: 'Accelerometer_y', 
+  ACCELEROMETER_Z: 'Accelerometer_z',
+  GYROSCOPE_A: 'Gyroscope_a',
+  GYROSCOPE_B: 'Gyroscope_b',
+  GYROSCOPE_G: 'Gyroscope_g',
+
+}
+
+function updateFieldIfNotNull(fieldName, value, precision=0) {
+  if (value != null) {
+    document.getElementById(fieldName).innerHTML = value.toFixed(precision).toString();
+    switch (fieldName) {
+      case PARAM.ORIENTATION_A: 
+      case PARAM.ORIENTATION_B: 
+      case PARAM.ORIENTATION_G:         
+      document.getElementById(fieldName).innerHTML = value.toFixed(precision).toString() + "&#0176";
+        break;
+      default:
+        document.getElementById(fieldName).innerHTML = value.toFixed(precision).toString();
+        break;
+    }
+  }
+}
+
+function handleOrientation(event) {
+  updateFieldIfNotNull(PARAM.ORIENTATION_A, event.alpha);
+  updateFieldIfNotNull(PARAM.ORIENTATION_B, event.beta);
+  updateFieldIfNotNull(PARAM.ORIENTATION_G, event.gamma);
+}
+
+function handleMotion(event) {
+  updateFieldIfNotNull(PARAM.ACCELEROMETER_X, event.acceleration.x);
+  updateFieldIfNotNull(PARAM.ACCELEROMETER_Y, event.acceleration.y);
+  updateFieldIfNotNull(PARAM.ACCELEROMETER_Z, event.acceleration.z);
+
+  //updateFieldIfNotNull('Accelerometer_i', event.interval, 2);
+
+  updateFieldIfNotNull(PARAM.GYROSCOPE_A, event.rotationRate.alpha);
+  updateFieldIfNotNull(PARAM.GYROSCOPE_B, event.rotationRate.beta);
+  updateFieldIfNotNull(PARAM.GYROSCOPE_G, event.rotationRate.gamma);
+}
+
+window.addEventListener("deviceorientation", handleOrientation);
+window.addEventListener("devicemotion", handleMotion);
+
+// --------------------------------- Bluetooth Data Implementation ---------------------------------
+// Bluetooth Data Class
 class BluetoothDeviceData {
   constructor(name, time, rssi, txPower){
     this.name = name;
@@ -19,8 +75,19 @@ class BluetoothDeviceData {
   }
 }
 
+// Check for bluetooth device hardware 
+navigator.bluetooth.getAvailability().then((available) => {
+  if (available) {
+    console.log("Bluetooth Status: This Device Supports Bluetooth!");
+  } else {
+    console.log("Bluetooth Status: This Device Does Not Support Bluetooth!");
+  }
+});
+
+// Initialize Bluetooth Data Collection Storage
 var bluetooth_data_dict = {'TestDevice': new BluetoothDeviceData('TestDevice', new Date().getTime(), 60, 30)};
 
+// On Button Click to Start Scanning for BLE devices
 async function onButtonClick() {
   let filters = [];
   let options = {};
@@ -39,8 +106,10 @@ async function onButtonClick() {
         JSON.stringify(options) +
         "</li>";
     }
-
+    //options.acceptAllDevices = true;
+    //const test = await navigator.bluetooth.requestDevice(options);
     const scan = await navigator.bluetooth.requestLEScan(options);
+    console.log("TEST")
 
     scanText.innerHTML +=
       "<li class='list-group-item'> Scan started with:" +
@@ -137,5 +206,6 @@ async function onButtonClick() {
     console.log("Argh! " + error);
   }
 }
+
 
 

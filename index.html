@@ -34,9 +34,34 @@
         </div>
       </div>
     </nav>
+    <!-- Device Sensor Data -->
+    <h2 style="text-align: center; margin: 5px">Device Sensor Data</h2>
+    <div style="text-align: center">
+      <ul class="list-group">
+        <li class="list-group-item">
+          <h4 style="text-align: center; margin: 5px">Orientation</h4>
+          <button id="Orientation_a" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Orientation &alpha; &#0176">a</button>
+          <button id="Orientation_b" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Orientation &beta; &#0176">b</button>
+          <button id="Orientation_g" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Orientation &gamma; &#0176">g</button>
+        </li>
+        <li class="list-group-item">
+          <h4 style="text-align: center; margin: 5px">Accelerometer</h4>
+          <button id="Accelerometer_x" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Accelerometer X m/s&sup2;">x</button>
+          <button id="Accelerometer_y" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Accelerometer Y m/s&sup2;">y</button>
+          <button id="Accelerometer_z" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Accelerometer Z m/s&sup2;">z</button>
+        </li>
+        <li class="list-group-item">
+          <h4 style="text-align: center; margin: 5px">Gyroscope</h4>
+          <button id="Gyroscope_a" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gyroscope &alpha; m/s&sup2;">a</button>
+          <button id="Gyroscope_b" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gyroscope &beta; m/s&sup2;">b</button>
+          <button id="Gyroscope_g" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gyroscope &gamma; m/s&sup2;">g</button>
+        </li>
+      </ul>
+      
+    </div>
 
     <!-- Bluetooth Advertisements List group -->
-    <h2 style="text-align: center; margin:5px">Bluetooth Advertisements</h2>
+    <h2 style="text-align: center; margin: 5px">Bluetooth Advertisements</h2>
     <!-- Bluetooth Scan Button -->
     <div style="text-align: center">
       <button
@@ -54,6 +79,7 @@
     </ul>
   </body>
 
+  <!-- BootStrap -->
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
