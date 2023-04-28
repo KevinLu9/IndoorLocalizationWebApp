@@ -1,8 +1,9 @@
 // --------------------------------- Bluetooth Data Implementation ---------------------------------
 // Bluetooth Data Class
 class BluetoothDeviceData {
-  constructor(name, time, rssi, txPower) {
+  constructor(name, id, time, rssi, txPower) {
     this.name = name;
+    this.id = id
     this.time = [time];
     this.rssi = [rssi];
     this.txPower = txPower;
@@ -34,6 +35,7 @@ navigator.bluetooth.getAvailability().then((available) => {
 var bluetoothDataDict = {
   TestDevice: new BluetoothDeviceData(
     "TestDevice",
+    "asdasdsadasf",
     new Date().getTime(),
     60,
     30
@@ -42,10 +44,13 @@ var bluetoothDataDict = {
 
 // On Button Click to Start Scanning for BLE devices
 async function onButtonClickStartScan() {
-  let filters = [];
+    console.log("Start Scan Pressed")
+  // let filters = [];
+  //let filters = [{"name":"FYP tag"}]
+  let filters = [{name:"BLE BEACON", companyIdentifier:0xEEEE}] // Filter by name, and company (0x0118 is Radius Networks, Inc.)
   let options = {};
-  options.acceptAllAdvertisements = true;
-  //options.filters = filters;
+  //options.acceptAllAdvertisements = true;
+  options.filters = filters;
   bluetoothDataDict = {}; // Reset the bluetooth data dictionary every button press
   //document.getElementById('StartScanButton').innerHTML = "Restart Scan";
   try {
@@ -62,7 +67,7 @@ async function onButtonClickStartScan() {
     //options.acceptAllDevices = true;
     //const test = await navigator.bluetooth.requestDevice(options);
     const scan = await navigator.bluetooth.requestLEScan(options);
-
+    console.log("Scan Request Success")
     // Disable StartScanButton and Enable StopScanButton
     startScanButton = document.getElementById("StartScanButton");
     stopScanButton = document.getElementById("StopScanButton");
@@ -133,6 +138,7 @@ async function onButtonClickStartScan() {
           let deviceDisplay = document.getElementById(event.device.name);
           deviceDisplay.innerHTML = `
               name: ${event.device.name}, <br/>
+              id: ${event.device.id}, <br/>
               Last Packet Time: ${getCurrentTime(
                 bluetoothDataDict[event.device.name].time[
                   bluetoothDataDict[event.device.name].time.length - 1
@@ -144,6 +150,7 @@ async function onButtonClickStartScan() {
           // Add new device to dictionary
           bluetoothDataDict[event.device.name] = new BluetoothDeviceData(
             event.device.name,
+            event.device.id,
             new Date().getTime(),
             event.rssi,
             event.txPower
@@ -154,6 +161,7 @@ async function onButtonClickStartScan() {
             event.device.name
           }' style='word-wrap: break-word'>
               name: ${event.device.name}, <br/>
+              id: ${event.device.id}, <br/>
               time: ${getCurrentTime(
                 bluetoothDataDict[event.device.name].time[0]
               )}, <br/>
