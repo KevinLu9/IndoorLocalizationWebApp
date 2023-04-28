@@ -67,11 +67,20 @@
       <button
         type="button"
         class="btn btn-primary"
-        onclick="onButtonClick()"
+        onclick="onButtonClickStartScan()"
         style="margin: 5px"
-        id="scan-button"
+        id="StartScanButton"
       >
         Start Scan
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        style="margin: 5px"
+        id="StopScanButton"
+        disabled
+      >
+        Stop Scan
       </button>
     </div>
     <ul class="list-group" id="BLEScanList">
@@ -92,4 +101,6 @@
     crossorigin="anonymous"
   />
   <script src="index.js"></script>
+  <script src="bluetooth.js"></script>
+  <script src="sensor.js"></script>
 </html>
