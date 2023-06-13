@@ -1,110 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Indoor Localization</title>
-  </head>
-  <body>
-    <!-- NavBar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Indoor Localization</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Features</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <!-- Device Sensor Data -->
-    <h2 style="text-align: center; margin: 5px">Device Sensor Data</h2>
-    <div style="text-align: center">
-      <ul class="list-group">
-        <li class="list-group-item">
-          <h4 style="text-align: center; margin: 5px">Orientation</h4>
-          <button id="Orientation_a" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Orientation &alpha; &#0176">a</button>
-          <button id="Orientation_b" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Orientation &beta; &#0176">b</button>
-          <button id="Orientation_g" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Orientation &gamma; &#0176">g</button>
-        </li>
-        <li class="list-group-item">
-          <h4 style="text-align: center; margin: 5px">Accelerometer</h4>
-          <button id="Accelerometer_x" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Accelerometer X m/s&sup2;">x</button>
-          <button id="Accelerometer_y" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Accelerometer Y m/s&sup2;">y</button>
-          <button id="Accelerometer_z" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Accelerometer Z m/s&sup2;">z</button>
-        </li>
-        <li class="list-group-item">
-          <h4 style="text-align: center; margin: 5px">Gyroscope</h4>
-          <button id="Gyroscope_a" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gyroscope &alpha; m/s&sup2;">a</button>
-          <button id="Gyroscope_b" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gyroscope &beta; m/s&sup2;">b</button>
-          <button id="Gyroscope_g" style="width:6em" type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Gyroscope &gamma; m/s&sup2;">g</button>
-        </li>
-      </ul>
-      
-    </div>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <!-- Bluetooth Scan Button -->
-    <h2 style="text-align: center; margin: 5px">Bluetooth Advertisements</h2>
-    <div style="text-align: center">
-      <button
-        type="button"
-        class="btn btn-primary"
-        onclick="onButtonClickStartScan()"
-        style="margin: 5px"
-        id="StartScanButton"
-      >
-        Start Scan
-      </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        style="margin: 5px"
-        id="StopScanButton"
-        disabled
-      >
-        Stop Scan
-      </button>
-    </div>
-    <!-- Bluetooth Advertisements List group -->
-    <ul class="list-group" id="BLEScanList">
-      <li class="list-group-item">Begin Scan for Advertisements</li>
-    </ul>
-  </body>
+        <title>Indoor Localisation</title>
+        <link rel='icon' type='image/png' href='/favicon.png'>
+        <!-- <link rel='stylesheet' href='/src/global.css'> -->
+        
+    </head>
 
-  <!-- BootStrap -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
-    crossorigin="anonymous"
-  ></script>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-    crossorigin="anonymous"
-  />
-
-  <!-- ChartJS -->
-  <script src="node_modules/chart.js/dist/chart.umd.js"></script>
-
-  <script src="index.js"></script>
-  <script src="bluetooth.js"></script>
-  <script src="sensor.js"></script>
+    <body>
+        <noscript>Please enable Javascript for this site to function.</noscript>
+        <script type="module" src="/src/main.js"></script>
+    </body>
 </html>
