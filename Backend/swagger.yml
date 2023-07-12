@@ -1,0 +1,18 @@
+openapi: 3.0.0
+info:
+  title: "KEV API"
+  description: "An API made by KEV"
+  version: "1.0.0"
+
+servers:
+  [url: "/api"]
+
+paths:
+  /device:
+    get:
+      operationId: "device.read"
+      tags: ["Device"]
+      summary: "Read the list of devices"
+      responses:
+        "200":
+          description: "Successfully read devices list"
