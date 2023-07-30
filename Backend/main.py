@@ -1,10 +1,10 @@
-from flask import render_template
-
+from flask import render_template, abort
+import config
 import connexion
 
-app = connexion.App(__name__, specification_dir="./")
-
+app = config.connex_app
 app.add_api("swagger.yml")
+
 
 @app.route("/")
 def home():

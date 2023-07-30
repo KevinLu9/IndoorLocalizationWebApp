@@ -7,6 +7,21 @@ info:
 servers:
   [url: "/api"]
 
+components:
+  schemas:
+    Devices:
+      type: "object"
+      required: ["id"]
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        txPower:
+          type: "integer"
+        
+
+
 paths:
   /device:
     get:
@@ -16,3 +31,18 @@ paths:
       responses:
         "200":
           description: "Successfully read devices list"
+    post:
+      operationId: "device.create"
+      tags: ["Device"]
+      summary: "Create a new device"
+      requestBody:
+        description: "Device to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "device"
+              $ref: "#/components/schemas/Devices"
+      responses:
+        "201":
+          description: "Successfully created a new Device"
