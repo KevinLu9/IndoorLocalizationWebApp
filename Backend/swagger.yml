@@ -19,6 +19,30 @@ components:
           type: "string"
         txPower:
           type: "integer"
+    Beacons:
+      type: "object"
+      required: ["id"]
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        txPower:
+          type: "integer"
+        x:
+          type: "number"
+        y:
+          type: "number"
+    BeaconLocation:
+      type: "object"
+      required: ["id"]
+      properties:
+        id:
+          type: "string"
+        x:
+          type: "number"
+        y:
+          type: "number"
         
 
 
@@ -46,3 +70,43 @@ paths:
       responses:
         "201":
           description: "Successfully created a new Device"
+    
+  /beacon:
+    get:
+      operationId: "beacon.read"
+      tags: ["Beacon"]
+      summary: "Read the list of beacons"
+      responses:
+        "200":
+          description: "Successfully read beacons list"
+    post:
+      operationId: "beacon.create"
+      tags: ["Beacon"]
+      summary: "Create a new Beacon"
+      requestBody:
+        description: "Beacon to create"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "beacon"
+              $ref: "#/components/schemas/Beacons"
+      responses:
+        "201":
+          description: "Successfully created a new Beacon"
+    patch:
+      operationId: "beacon.update"
+      tags: ["Beacon"]
+      summary: "Update a beacon's x, y location"
+      requestBody:
+        description: "Beacon to update"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "beacon"
+              $ref: "#/components/schemas/BeaconLocation"
+      responses:
+        "204":
+          description: "Successfully updated a beacon's location"
+      
