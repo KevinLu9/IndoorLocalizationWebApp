@@ -1,7 +1,7 @@
 <script>
-    import { metatags } from '@roxi/routify'
+    import { metatags, url } from '@roxi/routify'
     
-    metatags.title = 'My Routify app'
+    metatags.title = 'Indoor Localisation'
     metatags.description = 'Description coming soon...'
 </script>
 
