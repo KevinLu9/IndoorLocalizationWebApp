@@ -13,23 +13,23 @@ def read():
     return BeaconSchema(many=True).dump(beacons)
 
 
-def create(beacon):
-    id = beacon.get("id")
-    name = beacon.get("name")
-    txPower = beacon.get("txPower")
+def create(request):
+    id = request.get("id")
+    # name = request.get("name")
+    # txPower = request.get("txPower")
 
     if Beacon.query.filter(Beacon.id == id).one_or_none() is None:
-        new_beacon = BeaconSchema().load(beacon, session=db.session)
+        new_beacon = BeaconSchema().load(request, session=db.session)
         db.session.add(new_beacon)
         db.session.commit()
         return BeaconSchema().dump(new_beacon), 201
     else:
         abort(406, f"Beacon with id: {id} already exists.")
 
-def update(beacon):
-    id = beacon.get("id")
-    x = beacon.get("x")
-    y = beacon.get("y")
+def update(request):
+    id = request.get("id")
+    x = request.get("x")
+    y = request.get("y")
     beacon_edit = Beacon.query.filter(Beacon.id == id).one_or_none()
     if beacon_edit is not None:
         beacon_edit.x = x

@@ -33,7 +33,7 @@ components:
           type: "number"
         y:
           type: "number"
-    BeaconLocation:
+    Locations:
       type: "object"
       required: ["id"]
       properties:
@@ -43,10 +43,52 @@ components:
           type: "number"
         y:
           type: "number"
+        rssi:
+          type: "number"
+    LocationSearch:
+      type: "object"
+      required: ["id", "datetime_search"]
+      properties:
+        id:
+          type: "string"
+        datetime_search:
+          type: "string"
         
 
 
 paths:
+  /location:
+    get:
+      operationId: "location.read"
+      tags: ["Location"]
+      summary: "Read the list of device locations"
+      requestBody:
+        description: "Search device locations by datetime 'dd/mm/yyyy HH:MM'"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "locationsearch"
+              $ref: "#/components/schemas/LocationSearch"
+              
+      responses:
+        "200":
+          description: "Sucessfully read device location"
+    post:
+      operationId: "location.create"
+      tags: ["Location"]
+      summary: "Log a new device location"
+      requestBody:
+        description: "Log a new device location"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "location"
+              $ref: "#/components/schemas/Locations"
+      responses:
+        "200":
+          description: "Sucessfully logged a device location"
   /device:
     get:
       operationId: "device.read"
@@ -105,7 +147,7 @@ paths:
           application/json:
             schema:
               x-body-name: "beacon"
-              $ref: "#/components/schemas/BeaconLocation"
+              $ref: "#/components/schemas/Locations"
       responses:
         "204":
           description: "Successfully updated a beacon's location"

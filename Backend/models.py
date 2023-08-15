@@ -21,7 +21,6 @@ class DeviceSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
         sqla_session = db.session
 
-
 class Beacon(db.Model):
     __tablename__ = "beacon"
     id = db.Column(db.String(32), primary_key=True)
@@ -39,5 +38,25 @@ class Beacon(db.Model):
 class BeaconSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Beacon
+        load_instance = True
+        sqla_session = db.session
+
+class Location(db.Model):
+    __tablename__ = "location"
+    id = db.Column(db.String(32), primary_key=True)
+    index = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    x = db.Column(db.Float)
+    y = db.Column(db.Float)
+    rssi = db.Column(db.Float)
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow
+    )
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+    
+class LocationSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Location
         load_instance = True
         sqla_session = db.session
