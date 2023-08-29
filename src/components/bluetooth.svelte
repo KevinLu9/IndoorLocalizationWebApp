@@ -12,6 +12,7 @@
   } from "heroicons-for-svelte/icons/outline";
   import Chart from "chart.js/auto";
   import { url } from "@roxi/routify";
+  import { distanceWorker } from "../store";
 
   let clipboardClicked = false;
   let hasExperimentalFlagEnabled = null;
@@ -24,10 +25,9 @@
   $: bluetoothDataDict = {};
 
   // Distance worker Setup
-  const distanceWorker = new Worker("workers/distance.js");
-  distanceWorker.onmessage = (e) => {
-    // console.log(`[BLUETOOTH FROM DISTANCE WORKER] ${e.data}`);
-  };
+  // distanceWorker.onmessage = (e) => {
+  //   console.log('[BLUETOOTH FROM DISTANCE WORKER]', e.data);
+  // };
   // --------------------------------- Bluetooth Debugging ---------------------------------
 
   const getBluetooth = () => {
@@ -204,7 +204,10 @@
         bluetoothDataDict[event.device.id].addTime(time);
         bluetoothDataDict[event.device.id].addRSSI(event.rssi);
         bluetoothDataDict[event.device.id].setTxPower(event.txPower);
-        distanceWorker.postMessage({command:'rssi', values:{id:event.device.id, time:time, rssi:event.rssi}});
+        distanceWorker.postMessage({
+          command: "rssi",
+          values: { id: event.device.id, time: time, rssi: event.rssi },
+        });
       } else {
         // ELSE add a new device to dictionary and display on website.
         // Add new device to dictionary
@@ -215,7 +218,10 @@
           event.rssi,
           event.txPower
         );
-        distanceWorker.postMessage({command:'device', values:{id:event.device.id, txPower:event.txPower}});
+        distanceWorker.postMessage({
+          command: "device",
+          values: { id: event.device.id, txPower: event.txPower },
+        });
       }
     }
   };

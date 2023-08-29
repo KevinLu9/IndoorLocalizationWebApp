@@ -26,6 +26,7 @@
     },
     "dependencies": {
         "chart.js": "^4.3.0",
-        "heroicons-for-svelte": "^0.0.10"
+        "heroicons-for-svelte": "^0.0.10",
+        "kalman-filter": "^2.3.0"
     }
 }
