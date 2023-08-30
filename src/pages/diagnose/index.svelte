@@ -11,10 +11,6 @@
   } from "../../store.js";
   import { distanceWorker } from "../../store.js";
 
-  //   distanceWorker.onmessage = (e) => {
-  //   console.log(`[BLUETOOTH FROM DISTANCE WORKER] ${e.data}`);
-  // };
-
   // Location View Chart
 
   // Chart Plugin for image background
@@ -91,76 +87,105 @@
     chartLoc = new Chart(locationChart, config);
   });
 
-  // Setup Distance Chart
-  let distanceChart;
-  let chartDist;
-  onMount(() => {
-    const dataDist = {
-      labels: labels,
-      datasets: [
-        {
-          label: "Distance",
-          data: distanceData,
-          fill: true,
-          borderColor: "rgb(0, 0, 255)",
-          tension: 0.1,
-        },
-        {
-          label: "Distance with Kalman Filter",
-          data: kalmanDistanceData,
-          fill: true,
-          borderColor: "rgb(0, 255, 0)",
-          tension: 0.1,
-        },
-      ],
-      // datasets: [
-      //   {
-      //     label: "Distance",
-      //     data: $distance,
-      //     backgroundColor: "rgb(255, 0, 0)",
-      //   },
-      //   {
-      //     label: "Distance with Kalman Filter",
-      //     data: $kalmanDistance,
-      //     backgroundColor: "rgb(0, 255, 0)",
-      //   },
-      // ],
-    };
+  // Setup Charts for kalman distances
+  let charts;
+  $: {
+    charts = {};
+  }
 
-    const configDist = {
-      type: "line",
-      data: dataDist,
-      options: {
-        scales: {
-          x: {
-            type: "linear",
-            position: "bottom",
-            // suggestedMin: 0,
-            ticks: {
-              stepSize: 1,
+  class BeaconChart {
+    constructor(id, chartWidth = 10) {
+      this.chartDiv = undefined;
+      this.CHARTWIDTH = chartWidth;
+      this.distanceData = [0];
+      this.kalmanDistanceData = [0];
+      this.labels = [0];
+      this.latestDistance = 0;
+      this.latestKalmanDistance = 0;
+      this.id = `${id}-CHART}`;
+      this.config = {
+        type: "line",
+        data: {
+          labels: this.labels,
+          datasets: [
+            {
+              label: "Distance",
+              data: this.distanceData,
+              fill: true,
+              borderColor: "rgb(0, 0, 255)",
+              tension: 0.1,
+            },
+            {
+              label: "Distance with Kalman Filter",
+              data: this.kalmanDistanceData,
+              fill: true,
+              borderColor: "rgb(0, 255, 0)",
+              tension: 0.1,
+            },
+          ],
+          options: {
+            animation: false,
+            scales: {
+              x: {
+                type: "linear",
+                position: "bottom",
+                // suggestedMin: 0,
+                ticks: {
+                  stepSize: 1,
+                },
+              },
+              y: {
+                type: "linear",
+                position: "left",
+                suggestedMin: 0,
+                ticks: {
+                  stepSize: 1,
+                },
+              },
             },
           },
-          y: {
-            type: "linear",
-            position: "left",
-            suggestedMin: 0,
-            ticks: {
-              stepSize: 1,
-            },
-          },
         },
-      },
-    };
-    chartDist = new Chart(distanceChart, configDist);
-    // console.log("dist", $distance);
-  });
+      };
+      this.chart = undefined;
+    }
+    createChart() {
+      this.chartDiv = document.getElementById(this.id);
+      if (!this.chart && this.chartDiv) {
+        this.chart = new Chart(this.chartDiv, this.config);
+        console.log(`CREATED CHART for ${this.id}`);
+      }
+    }
+    addData(dist, kalman_dist) {
+      if (!this.chart) {
+        this.createChart();
+      }
+      if (this.distanceData.length > this.CHARTWIDTH) {
+        this.distanceData.shift();
+      }
+      this.distanceData.push(dist);
 
-  const distanceData = [];
-  const kalmanDistanceData = [];
-  const labels = [];
+      if (this.kalmanDistanceData.length > this.CHARTWIDTH) {
+        this.kalmanDistanceData.shift();
+      }
+      this.kalmanDistanceData.push(kalman_dist);
+
+      if (this.labels.length > this.CHARTWIDTH) {
+        this.labels.shift();
+      }
+      this.labels.push(this.labels[this.labels.length - 1] + 1);
+
+      this.latestDistance = dist;
+      this.latestKalmanDistance = kalman_dist;
+      this.chart?.update();
+      charts=charts;
+    }
+  }
   distanceWorker.onmessage = (e) => {
     console.log("[BLUETOOTH FROM DISTANCE WORKER]", e.data);
-    
+
+    if (!charts[e.data.id]) {
+      charts[e.data.id] = new BeaconChart(e.data.id);
+    }
     distance.update((items) => {
       // console.log(e.data.distance);
       items.push(e.data.distance);
@@ -174,35 +199,13 @@
       items.push(items.length);
       return items;
     });
+    const CHARTWIDTH = 20;
+    charts[e.data.id].addData(e.data.distance, e.data.kalman_distance);
 
-    if ($distance.length > 10) {
-      distanceData.shift(); 
-    } 
-    distanceData.push(e.data.distance);
-    kalmanDistanceData.push(e.data.distance);
-    if ($distance.length > 10) {
-      kalmanDistanceData.shift(); 
-    } 
-    kalmanDistanceData.push(e.data.kalman_distance);
-    if ($distanceLabels.length > 10) {
-      labels.shift(); 
-    } 
-    labels.push($distanceLabels.length);
-
-    // kalmanDistanceData.splice(0, kalmanDistanceData.length)
-    // kalmanDistanceData.concat(($kalmanDistance.length > 10) ? $kalmanDistance.slice($kalmanDistance.length-10, $kalmanDistance.length) : $kalmanDistance);
-    // labels.splice(0, labels.length)
-    // labels.concat(($distanceLabels.length > 10) ? $distanceLabels.slice($distanceLabels.length-10, $distanceLabels.length) : $distanceLabels);
-    console.log(distanceData, labels)
     if (chartLoc) {
       chartLoc.update();
     }
-    if (chartDist) {
-      chartDist.update();
-    }
   };
-
-  
 </script>
 
 <div>
@@ -212,7 +215,15 @@
   <div class="font-bold w-full text-center">
     Location Coordinatates: ({$location.x}, {$location.y})
   </div>
-  <div class="w-full aspect-square p-4">
-    <canvas class="" bind:this={distanceChart} />
-  </div>
+  {#each Object.entries(charts) as [id, beaconChart]}
+    <div class="w-full h-fit p-4">
+      <p class="font-bold w-full text-center">Beacon ID: {id}</p>
+      <p class="w-full text-center">
+        Raw: {beaconChart.latestDistance.toFixed(2)} m, Kalman: {beaconChart.latestKalmanDistance.toFixed(
+          2
+        )} m
+      </p>
+      <canvas class="" id={beaconChart.id} />
+    </div>
+  {/each}
 </div>

@@ -14,7 +14,7 @@ if (typeof Worker == "undefined") {
 }
 
 let bluetoothDataDict = {};
-let n = 1.15416;
+let n = 2;//1.15416;
 let e = 2.718;
 class BluetoothDevice {
   constructor(id, txPower) {
@@ -22,6 +22,7 @@ class BluetoothDevice {
     this.txPower = txPower;
     this.rssi = [];
     this.time = [];
+    this.previousCorrected = kFilter.getInitState();
   }
   addData(time, rssi) {
     this.rssi.push(rssi);
@@ -31,6 +32,14 @@ class BluetoothDevice {
     return this.rssi.length > 0
       ? [this.time[this.time.length - 1], this.rssi[this.rssi.length - 1]]
       : null;
+  }
+  runKalmanFilter = (data) => {
+    const predicted = kFilter.predict({previousCorrected: this.previousCorrected});
+    this.previousCorrected = kFilter.correct({
+      predicted,
+      observation: data,
+    });
+    return this.previousCorrected.mean.map(m => m[0])[0];
   }
 }
 
@@ -43,20 +52,6 @@ const getLatestData = () => {
   return res;
 };
 
-let previousCorrected = kFilter.getInitState();
-
-const runKalmanFilter = (newData) => {
-  // console.log({previousCorrected, newData});
-  const predicted = kFilter.predict({previousCorrected});
-  previousCorrected = kFilter.correct({
-    predicted,
-    observation: newData,
-  });
-  
-  return previousCorrected.mean.map(m => m[0])[0];
-}
-
-
 const calculateDistance = (data) => {
   // Calculates distance using Log-Distance path loss model
   return e **(-(bluetoothDataDict[data.values.id].txPower + data.values.rssi) / (10 * n) );
@@ -67,18 +62,18 @@ onmessage = ({ data }) => {
   // console.log(data)
   if (data.command == "rssi") {
     // If data is an rssi value, calculate distance
-    bluetoothDataDict[data.values.id].addData(
-      data.values.time,
-      data.values.rssi
-    );
-    // workerResult = `[DISTANCE WORKER] ID: ${data.values.id}, TIME: ${data.values.time}, RSSI: ${data.values.rssi}`;
+    // bluetoothDataDict[data.values.id].addData(
+    //   data.values.time,
+    //   data.values.rssi
+    // );
     let distance = calculateDistance(data);
-    let kalman_distance = runKalmanFilter([distance]);
-    // workerResult = `[DISTANCE WORKER] ID: ${data.values.id}, Distance: ${
-    //   calculateDistance(data).toFixed(2)
-    // } m, RSSI: ${data.values.rssi}`;
-    workerResult = {distance, kalman_distance};
-    // console.log(workerResult);
+    // if (previousDistances.length >= 5) {
+    //   previousDistances.shift()
+    // }
+    // previousDistances.push(distance);
+    // console.log(previousDistances)
+    let kalman_distance = bluetoothDataDict[data.values.id].runKalmanFilter([distance]);
+    workerResult = {distance, kalman_distance, id: data.values.id};
   } else if (data.command == "device") {
     // If data is a device, add to bluetooth dict
     bluetoothDataDict[data.values.id] = new BluetoothDevice(
