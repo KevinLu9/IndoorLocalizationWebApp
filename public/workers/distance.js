@@ -1,14 +1,8 @@
 
 // Distance Webworker Calculator using Bluetooth RSSI Values
-// import KalmanFilter from "../../node_modules/kalman-filter/index"
-
-// import KalmanFilter from "./kalman-filter/lib/kalman-filter";
-// const {KalmanFilter} = require('kalman-filter');
-
 importScripts('kalman-filter.js')
 var {KalmanFilter} = kalmanFilter;
 const kFilter = new KalmanFilter();
-// const res = kFilter.filterAll(observations);
 if (typeof Worker == "undefined") {
   throw new Error("Device does not support Web Workers!");
 }
@@ -61,17 +55,7 @@ onmessage = ({ data }) => {
   let workerResult = undefined;
   // console.log(data)
   if (data.command == "rssi") {
-    // If data is an rssi value, calculate distance
-    // bluetoothDataDict[data.values.id].addData(
-    //   data.values.time,
-    //   data.values.rssi
-    // );
     let distance = calculateDistance(data);
-    // if (previousDistances.length >= 5) {
-    //   previousDistances.shift()
-    // }
-    // previousDistances.push(distance);
-    // console.log(previousDistances)
     let kalman_distance = bluetoothDataDict[data.values.id].runKalmanFilter([distance]);
     workerResult = {distance, kalman_distance, id: data.values.id};
   } else if (data.command == "device") {
