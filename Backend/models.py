@@ -44,7 +44,7 @@ class BeaconSchema(ma.SQLAlchemyAutoSchema):
 class Location(db.Model):
     __tablename__ = "location"
     id = db.Column(db.String(32), primary_key=True)
-    index = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    index = db.Column(db.Integer, primary_key=True)
     x = db.Column(db.Float)
     y = db.Column(db.Float)
     rssi = db.Column(db.Float)
