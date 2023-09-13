@@ -56,7 +56,7 @@
     
     <ul class="w-full">
       {#each ble_beacons as beacon}
-        <li class="text-center bg-gray-600 p-2 rounded-lg border border-black dark:border-white mb-4">
+        <li class="text-center bg-gray-200 dark:bg-gray-600 p-2 rounded-lg border border-black dark:border-white mb-4">
           <div class="flex items-center justify-center mb-2">
             <p class="w-1/3 font-bold">ID:</p>
             <p class="w-2/3">{beacon.id}</p>
