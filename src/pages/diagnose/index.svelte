@@ -8,6 +8,7 @@
     distance,
     kalmanDistance,
     distanceLabels,
+    beacons
   } from "../../store.js";
   import { distanceWorker } from "../../store.js";
 
@@ -32,6 +33,7 @@
     },
   };
   // Setup Location Chart
+
   let chartLoc;
   let locationChart;
   onMount(() => {
@@ -51,6 +53,11 @@
           label: "User Past Locations",
           data: $previousLocations,
           backgroundColor: "rgb(0, 255, 0)",
+        },
+        {
+          label: "Beacon Locations",
+          data: [],
+          backgroundColor: "rgb(0, 0, 255)",
         },
       ],
     };
@@ -85,7 +92,13 @@
       },
     };
     chartLoc = new Chart(locationChart, config);
+    beacons.subscribe((value) => {
+      data.datasets[2].data = value.map((beacon) => {return {x: beacon.x, y: beacon.y}})
+      chartLoc.update()
+    })
   });
+
+  
 
   // Setup Charts for kalman distances
   let charts;
