@@ -141,7 +141,7 @@ paths:
     patch:
       operationId: "beacon.update"
       tags: ["Beacon"]
-      summary: "Update a beacon's x, y location"
+      summary: "Update a beacon's x, y, z location"
       requestBody:
         description: "Beacon to update"
         required: True
@@ -149,7 +149,7 @@ paths:
           application/json:
             schema:
               x-body-name: "beacon"
-              $ref: "#/components/schemas/Locations"
+              $ref: "#/components/schemas/Beacons"
       responses:
         "204":
           description: "Successfully updated a beacon's location"
