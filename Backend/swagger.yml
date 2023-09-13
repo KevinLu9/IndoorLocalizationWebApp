@@ -33,6 +33,8 @@ components:
           type: "number"
         y:
           type: "number"
+        z:
+          type: "number"
     Locations:
       type: "object"
       required: ["id"]

@@ -28,6 +28,7 @@ class Beacon(db.Model):
     txPower = db.Column(db.Integer)
     x = db.Column(db.Float)
     y = db.Column(db.Float)
+    z = db.Column(db.Float)
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow
     )
