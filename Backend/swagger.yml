@@ -70,7 +70,7 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: "locationsearch"
+              x-body-name: "request"
               $ref: "#/components/schemas/LocationSearch"
               
       responses:
@@ -86,7 +86,7 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: "location"
+              x-body-name: "request"
               $ref: "#/components/schemas/Locations"
       responses:
         "200":
@@ -109,7 +109,7 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: "device"
+              x-body-name: "request"
               $ref: "#/components/schemas/Devices"
       responses:
         "201":
@@ -133,7 +133,7 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: "beacon"
+              x-body-name: "request"
               $ref: "#/components/schemas/Beacons"
       responses:
         "201":
@@ -148,7 +148,7 @@ paths:
         content:
           application/json:
             schema:
-              x-body-name: "beacon"
+              x-body-name: "request"
               $ref: "#/components/schemas/Beacons"
       responses:
         "204":

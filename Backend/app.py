@@ -5,7 +5,6 @@ import connexion
 
 app = config.connex_app
 cors = CORS(app.app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 app.add_api("swagger.yml")
 
 
