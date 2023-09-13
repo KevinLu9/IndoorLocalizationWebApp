@@ -1,8 +1,11 @@
 from flask import render_template, abort
+from flask_cors import CORS, cross_origin
 import config
 import connexion
 
 app = config.connex_app
+cors = CORS(app)
+# app.config['CORS_HEADERS'] = 'Content-Type'
 app.add_api("swagger.yml")
 
 
