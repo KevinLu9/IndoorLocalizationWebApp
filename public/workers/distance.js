@@ -1,4 +1,3 @@
-
 // Distance Webworker Calculator using Bluetooth RSSI Values
 importScripts('kalman-filter.js')
 var {KalmanFilter} = kalmanFilter;
@@ -10,10 +9,13 @@ if (typeof Worker == "undefined") {
 let bluetoothDataDict = {};
 let n = 2;//1.15416;
 let e = 2.718;
-class BluetoothDevice {
-  constructor(id, txPower) {
+class BluetoothBeacon {
+  constructor(id, txPower, x, y, z) {
     this.id = id;
     this.txPower = txPower;
+    this.x = x;
+    this.y = y;
+    this.z = z;
     this.rssi = [];
     this.time = [];
     this.previousCorrected = kFilter.getInitState();
@@ -60,9 +62,12 @@ onmessage = ({ data }) => {
     workerResult = {distance, kalman_distance, id: data.values.id};
   } else if (data.command == "device") {
     // If data is a device, add to bluetooth dict
-    bluetoothDataDict[data.values.id] = new BluetoothDevice(
+    bluetoothDataDict[data.values.id] = new BluetoothBeacon(
       data.values.id,
-      data.values.txPower
+      data.values.txPower,
+      data.values.x,
+      data.values.y,
+      data.values.z
     );
     console.log(
       `[DISTANCE WORKER] New Bluetooth Device Registered: ID: ${data.values.id}, txPower: ${data.values.txPower}`

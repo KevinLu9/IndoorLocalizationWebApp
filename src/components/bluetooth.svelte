@@ -13,16 +13,20 @@
   import Chart from "chart.js/auto";
   import { url } from "@roxi/routify";
   import { distanceWorker } from "../store";
+  import { api } from "../api";
+  import { beacons } from "../store";
 
   let clipboardClicked = false;
   let hasExperimentalFlagEnabled = null;
   let deviceHasBluetooth = null;
   let hasUserPermission = false;
   let scan = null;
-  let bluetoothDataDict = null;
+  let bluetoothDataDict = {};
   let isScanning = false;
   let confirmModalDiv;
-  $: bluetoothDataDict = {};
+  $: {
+    beacons.set(Object.values(bluetoothDataDict).map((value) => {return {id: value.id, txPower: value.txPower, name: value.name, x: value.x, y: value.y, z: value.z}}));
+  };
 
   // Distance worker Setup
   // distanceWorker.onmessage = (e) => {
@@ -71,20 +75,23 @@
   getBluetooth();
   // onMount();
   // --------------------------------- Bluetooth Implementation ---------------------------------
-  class BluetoothDevice {
+  class BluetoothBeacon {
     /**
-     * Represents a Bluetooth Device and its properties
-     * @param {*} name : The name of the Bluetooth device
-     * @param {*} id  : The address of the bluetooth device
-     * @param {*} time : The times that packets were received from the device
-     * @param {*} rssi : The received signal strength indicator values received from the device
-     * @param {*} txPower : The transmission power of the device in dBm
+     * Represents a Bluetooth Beacon and its properties
+     * @param {*} name : The name of the Bluetooth beacon
+     * @param {*} id  : The address of the bluetooth beacon
+     * @param {*} time : The times that packets were received from the beacon
+     * @param {*} rssi : The received signal strength indicator values received from the beacon
+     * @param {*} txPower : The transmission power of the beacon in dBm
      */
-    constructor(name, id, time, rssi, txPower) {
+    constructor(id, name, txPower, x, y, z, rssi, time) {
       this.name = name;
       this.id = id;
-      this.time = [time];
-      this.rssi = [rssi];
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.time = [];
+      this.rssi = [];
       this.txPower = txPower;
 
       // Set up Chart attributes
@@ -174,6 +181,27 @@
     }
   }
 
+  // get bluetooth beacons from api
+  api.get_beacon().then((res) => {
+    console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
+    res?.data?.forEach((beacon) => {
+      bluetoothDataDict[beacon.id] = new BluetoothBeacon(
+        beacon.id,
+        beacon.name,
+        beacon.txPower,
+        beacon.x,
+        beacon.y,
+        beacon.z,
+        0,
+        new Date().getTime()
+      );
+      distanceWorker.postMessage({
+          command: "device",
+          values: { id: beacon.id, txPower: beacon.txPower, x: beacon.x, y: beacon.y, z: beacon.z },
+        });
+    })
+  })
+
   const getCurrentTime = (ms_time) => {
     let time = new Date();
     time.setTime(ms_time);
@@ -211,16 +239,23 @@
       } else {
         // ELSE add a new device to dictionary and display on website.
         // Add new device to dictionary
-        bluetoothDataDict[event.device.id] = new BluetoothDevice(
-          event.device.name,
+        bluetoothDataDict[event.device.id] = new BluetoothBeacon(
           event.device.id,
-          new Date().getTime(),
+          event.device.name,
+          event.txPower,
+          null,
+          null,
+          null,
           event.rssi,
-          event.txPower
+          new Date().getTime(),
         );
+        api.create_beacon(event.device.id, event.device.name, event.txPower, 0, 0, 0)
+        .then((res) => {
+          console.log("[API] Created Beacon: ", res);
+        })
         distanceWorker.postMessage({
           command: "device",
-          values: { id: event.device.id, txPower: event.txPower },
+          values: { id: event.device.id, txPower: event.txPower, x: 0, y: 0, z: 0 },
         });
       }
     }
@@ -242,7 +277,7 @@
     if (deviceHasBluetooth && hasExperimentalFlagEnabled && hasUserPermission) {
       isScanning = true;
       console.log("Bluetooth Advertising Scanning Started");
-      bluetoothDataDict = {};
+      // bluetoothDataDict = {};
       // Event listener for advertisements received
       navigator.bluetooth.addEventListener(
         "advertisementreceived",

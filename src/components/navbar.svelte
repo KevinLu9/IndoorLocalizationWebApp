@@ -13,6 +13,7 @@
     ["/", "Home"],
     ["/about", "About"],
     ["/diagnose", "Diagnose"],
+    ["/setup", "Setup"]
   ];
   let drawerVal = false;
   $m: {

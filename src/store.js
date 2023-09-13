@@ -9,10 +9,10 @@ export const updateLocation = (location) => {
   });
   location.set(location);
 };
-
 export const distance = writable([]);
 export const kalmanDistance = writable([]);
 export const distanceLabels = writable([]);
 
-export const distanceWorker = new Worker("workers/distance.js");
+export const beacons = writable([]);
 
+export const distanceWorker = new Worker("workers/distance.js");
