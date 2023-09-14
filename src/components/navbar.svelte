@@ -64,7 +64,7 @@
       </a>
       <div class="pr-10 flex-none hidden lg:block">
         <ul
-          class="font-medium flex flex-col p-4 md:p-0 mt-4 border rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 bg-gray-800 md:bg-gray-900 border-gray-700"
+          class="font-medium flex flex-col p-4 md:p-0 mt-4 border rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 border-gray-700"
         >
           {#each links as link}
             <li>
