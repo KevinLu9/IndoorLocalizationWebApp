@@ -30,15 +30,15 @@
   />
   <div class="drawer-content flex flex-col">
     <div
-      class="w-full navbar bg-base-300 flex justify-start lg:justify-between"
+      class="w-full navbar bg-gray-700 flex justify-start"
     >
-      <div class="flex-none lg:hidden">
+      <div class="flex-none">
         <!-- svelte-ignore a11y-label-has-associated-control -->
         <label
           on:click={() => {
             drawerVal = !drawerVal;
           }}
-          class="btn btn-square btn-ghost"
+          class="btn btn-square btn-ghost text-gray-300"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -60,69 +60,35 @@
           class="h-8 mr-3"
           alt="Flowbite Logo"
         />
-        <div class="flex-1 px-2 mx-2 font-bold">Indoor Localisation</div>
+        <div class="flex-1 px-2 mx-2 font-bold text-white">Indoor Localisation</div>
       </a>
-      <div class="pr-10 flex-none hidden lg:block">
-        <ul
-          class="font-medium flex flex-col p-4 md:p-0 mt-4 border rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 border-gray-700"
-        >
-          {#each links as link}
-            <li>
-              {#if $route.path == "/index" && link[0] == "/"}
-                <a
-                  href={link[0]}
-                  class="block py-2 pl-3 pr-4 bg-blue-700 rounded md:bg-transparent md:p-0 ext-white md:text-blue-500"
-                >
-                  {link[1]}
-                </a>
-              {:else if $route.path == link[0] + "/index"}
-                <a
-                  href={link[0]}
-                  class="disabled block py-2 pl-3 pr-4 bg-blue-700 rounded md:bg-transparent md:p-0 text-white md:text-blue-500"
-                >
-                  {link[1]}
-                </a>
-              {:else}
-                <a
-                  href={link[0]}
-                  class="block py-2 pl-3 pr-4 rounded md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
-                >
-                  {link[1]}
-                </a>
-              {/if}
-            </li>
-          {/each}
-        </ul>
-      </div>
     </div>
     <!-- Page content here -->
   </div>
   <div class="drawer-side">
     <label for="my-drawer" class="drawer-overlay" />
-    <div class="flex flex-col h-full">
-      <div class="bg-base-200">
-        <ul class="menu p-4 w-full divide-solid divide-white">
-          <li class="flex flex-row">
-            <div class="flex items-center">
-              <img
-                src="/images/location_logo.png"
-                class="h-8 mr-3"
-                alt="Flowbite Logo"
-              />
-              <div class="flex-1 px-2 mx-2 font-bold text-lg">
-                Indoor Localisation
-              </div>
-            </div>
-            <div class="pr-0" on:click={()=>{drawerVal=!drawerVal}}>
-              <Icon icon={ChevronDoubleLeft} class="scale-150 justify-end"/>
-            </div>
-          </li>
+    <div class="flex flex-col h-full bg-gray-200 dark:bg-gray-900">
+      <div class="bg-gray-200 dark:bg-gray-900">
+        <li class="flex flex-row w-full justify-between items-center bg-gray-700 p-3">
+          <div class="w-10 h-10">
+            <img
+              src="/images/location_logo.png"
+              class="object-fill w-10 h-10"
+              alt="Logo"
+            />
+          </div>
+          <p class="px-2 mx-2 font-bold text-lg text-center text-white">Indoor Localisation</p>
+          <div class="pr-0 cursor-pointer" on:click={()=>{drawerVal=!drawerVal}}>
+            <Icon icon={ChevronDoubleLeft} class="scale-150 justify-end text-gray-200"/>
+          </div>
+        </li>
+        <ul class="menu w-full divide-solid divide-white ">
           {#each links as link}
             <li>
               {#if $route.path == "/index" && link[0] == "/"}
                 <a
                   href={link[0]}
-                  class="flex flex-col justify-center btn btn-disabled font-bold disabled bg-blue-700 rounded md:bg-transparent md:p-0 md:text-blue-500"
+                  class="flex flex-col justify-center btn font-bold pointer-events-none border-black bg-blue-700 rounded-lg"
                   on:click={() => {
                     drawerVal = !drawerVal;
                     console.log("WUT");
@@ -135,7 +101,7 @@
               {:else if $route.path == link[0] + "/index"}
                 <a
                   href={link[0]}
-                  class="flex flex-col justify-center btn btn-disabled font-bold disabled bg-blue-700 rounded md:bg-transparent md:p-0 md:text-blue-500"
+                  class="flex flex-col justify-center btn font-bold pointer-events-none border-black bg-blue-700 rounded-lg"
                   on:click={() => {
                     drawerVal = !drawerVal;
                   }}
@@ -147,7 +113,7 @@
               {:else}
                 <a
                   href={link[0]}
-                  class="flex flex-col justify-center btn font-bold rounded md:border-0 md:p-0 md:hover:text-blue-500 hover:bg-gray-700 md:hover:bg-transparent"
+                  class="flex flex-col justify-center btn bg-gray-200 dark:bg-gray-900 border-0 font-bold rounded-lg md:hover:text-blue-500 hover:bg-gray-700"
                   on:click={() => {
                     drawerVal = !drawerVal;
                   }}
@@ -160,28 +126,29 @@
             </li>
           {/each}
         </ul>
+        <div class="divider m-0 p-0 bg-gray-200 dark:bg-gray-900"/>
         <div
-          class="btn w-[50%] flex flex-col justify-between"
+          class="btn bg-gray-200 dark:bg-gray-900 border-0 flex flex-col justify-center items-center"
           on:click|preventDefault={() => {
             isDiagnoseVisible = !isDiagnoseVisible;
           }}
         >
-          {#if isDiagnoseVisible}
-            <Icon icon={ChevronDown} class="scale-150 mb-4" />
-          {:else}
-            <Icon icon={ChevronUp} class="scale-150 mb-4" />
-          {/if}
-          <div class="flex">
-            <Icon icon={InformationCircle} class="scale-150 mb-1 mr-2" />
-            Settings
+          <div class="flex flex-row items-center justify-center">
+            <div class="w-full h-full flex items-center">
+              {#if isDiagnoseVisible}
+                <Icon icon={ChevronDown} class="scale-150 mr-2" />
+              {:else}
+                <Icon icon={ChevronUp} class="scale-150 mr-2" />
+              {/if}
+            </div>
+            
+            <p>Settings</p>
           </div>
         </div>
       </div>
-      <div class="divider m-0 p-0 bg-base-200"/>
-      <div class="outline-2 outline-blue-900 overflow-x-auto bg-base-200 h-full">
-        {#if isDiagnoseVisible}
-          <slot />
-        {/if}
+      <div class="divider m-0 p-0 bg-gray-200 dark:bg-gray-900"/>
+      <div class="outline-2 outline-blue-900 overflow-x-auto bg-gray-200 dark:bg-gray-900 h-full {isDiagnoseVisible ? '' : 'invisible'}">
+        <slot />
       </div>
     </div>
   </div>
