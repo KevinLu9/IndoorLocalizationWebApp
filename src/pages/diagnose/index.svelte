@@ -165,7 +165,7 @@
       this.chartDiv = document.getElementById(this.id);
       if (!this.chart && this.chartDiv) {
         this.chart = new Chart(this.chartDiv, this.config);
-        console.log(`CREATED CHART for ${this.id}`);
+        // console.log(`CREATED CHART for ${this.id}`);
       }
     }
     addData(dist, kalman_dist) {
@@ -194,7 +194,7 @@
     }
   }
   distanceWorker.onmessage = (e) => {
-    console.log("[BLUETOOTH FROM DISTANCE WORKER]", e.data);
+    // console.log("[BLUETOOTH FROM DISTANCE WORKER]", e.data);
 
     if (!charts[e.data.id]) {
       charts[e.data.id] = new BeaconChart(e.data.id);

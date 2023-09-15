@@ -183,7 +183,7 @@
 
   // get bluetooth beacons from api
   api.get_beacon().then((res) => {
-    console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
+    // console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
     res?.data?.forEach((beacon) => {
       bluetoothDataDict[beacon.id] = new BluetoothBeacon(
         beacon.id,
@@ -223,24 +223,51 @@
     );
   };
 
+  const logDataView = (labelOfDataSource, key, valueDataView) => {
+  const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
+    return b.toString(16).padStart(2, '0');
+  }).join(' ');
+  const textDecoder = new TextDecoder('ascii');
+  const asciiString = textDecoder.decode(valueDataView.buffer);
+  console.log(`  ${labelOfDataSource} Data: ` + key +
+      '\n    (Hex) ' + hexString +
+      '\n    (ASCII) ' + asciiString);
+};
+
   // Process Advertisement data and display onto the GUI
   const OnAdvertisementReceived = (event) => {
-    if (event.device.id != null) {
-      if (bluetoothDataDict[event.device.id] != undefined) {
+    let manufacturer = undefined
+    event?.manufacturerData?.forEach((valueDataView, key) => {
+      if (key != 61166) {
+        return;
+      }
+      manufacturer = valueDataView;
+    }); // Find key with 0xEEEE manufacturer
+    if (manufacturer) {
+      const manufacturerID = [...new Uint8Array(manufacturer.buffer)].map(b => {
+          return b.toString(16).padStart(2, '0');
+        }).join(' ');
+      if (bluetoothDataDict[manufacturerID] != undefined) {
+
+      //   event.manufacturerData.forEach((valueDataView, key) => {
+      //     logDataView('Manufacturer: ', key, valueDataView);
+      // });
+      // Set id as manufacturer information
+      
         // Add data to existing device in dictionary
         let time = new Date().getTime();
-        bluetoothDataDict[event.device.id].addTime(time);
-        bluetoothDataDict[event.device.id].addRSSI(event.rssi);
-        bluetoothDataDict[event.device.id].setTxPower(event.txPower);
+        bluetoothDataDict[manufacturerID].addTime(time);
+        bluetoothDataDict[manufacturerID].addRSSI(event.rssi);
+        bluetoothDataDict[manufacturerID].setTxPower(event.txPower);
         distanceWorker.postMessage({
           command: "rssi",
-          values: { id: event.device.id, time: time, rssi: event.rssi },
+          values: { id: manufacturerID, time: time, rssi: event.rssi },
         });
       } else {
         // ELSE add a new device to dictionary and display on website.
         // Add new device to dictionary
-        bluetoothDataDict[event.device.id] = new BluetoothBeacon(
-          event.device.id,
+        bluetoothDataDict[manufacturerID] = new BluetoothBeacon(
+          manufacturerID,
           event.device.name,
           event.txPower,
           null,
@@ -249,13 +276,13 @@
           event.rssi,
           new Date().getTime(),
         );
-        api.create_beacon(event.device.id, event.device.name, event.txPower, 0, 0, 0)
+        api.create_beacon(manufacturerID, event.device.name, event.txPower, 0, 0, 0)
         .then((res) => {
           console.log("[API] Created Beacon: ", res);
         })
         distanceWorker.postMessage({
           command: "device",
-          values: { id: event.device.id, txPower: event.txPower, x: 0, y: 0, z: 0 },
+          values: { id: manufacturerID, txPower: event.txPower, x: 0, y: 0, z: 0 },
         });
       }
     }
