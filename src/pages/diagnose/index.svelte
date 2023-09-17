@@ -101,11 +101,6 @@
   
 
   // Setup Charts for kalman distances
-  let charts;
-  $: {
-    charts = {};
-  }
-
   class BeaconChart {
     constructor(id, chartWidth = 10) {
       this.chartDiv = undefined;
@@ -194,6 +189,11 @@
     }
   }
 
+  let charts = {};
+  $beacons.forEach((beacon) => {
+    charts[beacon.id] = new BeaconChart(beacon.id);
+  })
+
   beacons.subscribe((value) => {
     value.forEach((beacon) => {
       if (!charts[beacon.id]) {
@@ -206,8 +206,7 @@
   distanceLabels.subscribe((value) => {
     // console.log('distanceLabels updated: ', value)
     Object.entries(value).forEach(([id, labels]) => {
-      console.log({id, labels})
-      if (charts[id].labels.length == labels.length) {
+      if (charts[id]?.labels?.length == labels.length) {
         return
       }
       charts[id].addData(labels[labels.length - 1], $distance[id][$distance[id].length - 1], $kalmanDistance[id][$kalmanDistance[id].length - 1]);

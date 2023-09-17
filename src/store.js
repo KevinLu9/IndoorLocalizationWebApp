@@ -14,6 +14,7 @@ export const kalmanDistance = writable({});
 export const distanceLabels = writable({});
 export const beacons = writable([]);
 export const distanceWorker = new Worker("workers/distance.js");
+export const positionWorker = new Worker("workers/position.js")
 
 const initialTime = new Date().getTime() / 1000;
 
