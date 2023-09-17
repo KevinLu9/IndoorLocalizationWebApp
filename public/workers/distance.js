@@ -21,6 +21,8 @@ class BluetoothBeacon {
     this.time = [];
     this.distance = [];
     this.kalmanDistance = [];
+    this.latestUsed = false;
+    // this.flagged = [];
     this.maxBufferSize = 20;
     this.previousCorrected = kFilter.getInitState();
   }
@@ -36,6 +38,7 @@ class BluetoothBeacon {
     // Add new values
     this.rssi.push(rssi);
     this.time.push(time);
+    this.latestUsed = false;
     // Calculate distance with and without kalman filter based on the rssi
     const dist = this.calculateDistance(rssi);
     const kalmanDist = this.runKalmanFilter([dist]);
@@ -46,9 +49,10 @@ class BluetoothBeacon {
   }
   getLatestData() {
     // Gets the latest data from the beacon
-    return this.rssi.length > 0
-      ? {'time': this.time[this.time.length - 1], 'rssi': this.rssi[this.rssi.length - 1], 'distance': this.distance[this.distance.length - 1], 'kalmanDistance': this.kalmanDistance[this.kalmanDistance.length - 1]}
-      : null;
+    if (this.rssi.length > 0 && !this.latestUsed) {
+      return {'time': this.time[this.time.length - 1], 'rssi': this.rssi[this.rssi.length - 1], 'distance': this.distance[this.distance.length - 1], 'kalmanDistance': this.kalmanDistance[this.kalmanDistance.length - 1], x:this.x, y:this.y, z:this.z, id: this.id};
+    }
+    return null;
   }
   calculateDistance(rssi) {
     // Calculates distance using Log-Distance path loss model
@@ -65,15 +69,32 @@ class BluetoothBeacon {
   }
 }
 
-const getLatestData = () => {
-  const res = [];
+const getLatestData = (currentTime) => {
+  let res = [];
   const keys = Object.keys(bluetoothDataDict);
   for (let key of keys) {
-    res.push(bluetoothDataDict[key].getLatestData());
+    // If the bluetooth beacon does not have a location of (0, 0, 0)
+    if (bluetoothDataDict[key].x != 0 || bluetoothDataDict[key].y != 0 || bluetoothDataDict[key].z != 0) {
+      const latestData = bluetoothDataDict[key].getLatestData();
+      if (latestData) {
+        res.push(latestData);
+      }
+      
+    }
   }
   // Filter for only recent values (2 seconds ago)
-  res.filter((value) => {value.time < new Date().getTime() - 2000})
-  return res;
+  res = res.filter((value) => {return new Date().getTime() - value.time < 1000})
+
+  // Get 3 smallest values
+  if (res.length >= 3) {
+    res = res.sort((a, b) => a.kalmanDistance - b.kalmanDistance)
+    res = res.slice(0, 3);
+    res.forEach((value) => {
+      bluetoothDataDict[value.id].latestUsed = true;
+    })
+    return res
+  }
+  return undefined
 };
 
 // Handle Messages received
@@ -83,9 +104,16 @@ onmessage = ({ data }) => {
   if (data.command == "rssi") {
     let distance;
     let kalman_distance;
-    [distance, kalman_distance] = bluetoothDataDict[data.values.id].addData(new Date().getTime(), data.values.rssi);
+    const currentTime = new Date().getTime();
+    [distance, kalman_distance] = bluetoothDataDict[data.values.id].addData(currentTime, data.values.rssi);
 
-    workerResult = {distance, kalman_distance, id: data.values.id};
+    workerResult = {distance, kalman_distance, id: data.values.id, time: currentTime / 1000};
+    const distanceVals = getLatestData(currentTime);
+    // console.log('[LOCATION] distanceVals: ', distanceVals)
+    if (distanceVals) {
+
+    }
+
   } else if (data.command == "device") {
     // If data is a device, add to bluetooth dict
     bluetoothDataDict[data.values.id] = new BluetoothBeacon(
