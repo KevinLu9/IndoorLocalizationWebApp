@@ -8,9 +8,9 @@
     distance,
     kalmanDistance,
     distanceLabels,
-    beacons
+    distanceWorker, 
+    beacons,
   } from "../../store.js";
-  import { distanceWorker } from "../../store.js";
 
   // Location View Chart
 
@@ -168,7 +168,7 @@
         // console.log(`CREATED CHART for ${this.id}`);
       }
     }
-    addData(dist, kalman_dist) {
+    addData(label, dist, kalman_dist) {
       if (!this.chart) {
         this.createChart();
       }
@@ -185,7 +185,7 @@
       if (this.labels.length > this.CHARTWIDTH) {
         this.labels.shift();
       }
-      this.labels.push(this.labels[this.labels.length - 1] + 1);
+      this.labels.push(label);
 
       this.latestDistance = dist;
       this.latestKalmanDistance = kalman_dist;
@@ -193,32 +193,27 @@
       charts=charts;
     }
   }
-  distanceWorker.onmessage = (e) => {
-    // console.log("[BLUETOOTH FROM DISTANCE WORKER]", e.data);
 
-    if (!charts[e.data.id]) {
-      charts[e.data.id] = new BeaconChart(e.data.id);
-    }
-    distance.update((items) => {
-      // console.log(e.data.distance);
-      items.push(e.data.distance);
-      return items;
-    });
-    kalmanDistance.update((items) => {
-      items.push(e.data.kalman_distance);
-      return items;
-    });
-    distanceLabels.update((items) => {
-      items.push(items.length);
-      return items;
-    });
-    const CHARTWIDTH = 20;
-    charts[e.data.id].addData(e.data.distance, e.data.kalman_distance);
+  beacons.subscribe((value) => {
+    value.forEach((beacon) => {
+      if (!charts[beacon.id]) {
+        charts[beacon.id] = new BeaconChart(beacon.id);
+      }
 
-    if (chartLoc) {
-      chartLoc.update();
-    }
-  };
+    })
+  })
+  
+  distanceLabels.subscribe((value) => {
+    // console.log('distanceLabels updated: ', value)
+    Object.entries(value).forEach(([id, labels]) => {
+      console.log({id, labels})
+      if (charts[id].labels.length == labels.length) {
+        return
+      }
+      charts[id].addData(labels[labels.length - 1], $distance[id][$distance[id].length - 1], $kalmanDistance[id][$kalmanDistance[id].length - 1]);
+    })
+  })
+
 </script>
 
 <div>

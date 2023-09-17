@@ -38,7 +38,11 @@
 </script>
 
 <template>
-  <div class="divider p-0 m-0" tabindex=0 bind:this={topDiv}></div>
+  <div class="p-4" tabindex=0 bind:this={topDiv}>
+    <p class="font-bold text-center text-xl">Setup Bluetooth Beacons</p>
+    <p class="text-center">Beacons with coordinates (0, 0, 0) will be ignored! The App should also be reloaded after changing these values.</p>
+  </div>
+  
   <div class="w-full flex flex-col items-center justify-center p-4">
       {#if isLoading}
         <span class="loading loading-spinner loading-lg mb-2"></span>
