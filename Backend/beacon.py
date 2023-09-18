@@ -31,11 +31,13 @@ def update(request):
     x = request.get("x")
     y = request.get("y")
     z = request.get("z")
+    txPower = request.get("txPower")
     beacon_edit = Beacon.query.filter(Beacon.id == id).one_or_none()
     if beacon_edit is not None:
         beacon_edit.x = x
         beacon_edit.y = y
         beacon_edit.z = z
+        beacon_edit.txPower = txPower
         db.session.commit()
         return BeaconSchema().dump(beacon_edit), 201
     else:

@@ -16,9 +16,6 @@
     ["/setup", "Setup"]
   ];
   let drawerVal = false;
-  $m: {
-    console.log({ drawerVal });
-  }
 </script>
 
 <div class="drawer">

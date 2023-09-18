@@ -19,18 +19,18 @@
   image.src = "/images/building_test.jpg";
 
   const plugin = {
-    id: "customCanvasBackgroundImage",
-    beforeDraw: (chart) => {
-      if (image.complete) {
-        const ctx = chart.ctx;
-        const { top, left, width, height } = chart.chartArea;
-        // const x = left + width / 2 - image.width / 2;
-        // const y = top + height / 2 - image.height / 2;
-        ctx.drawImage(image, left, top, width, height);
-      } else {
-        image.onload = () => chart.draw();
-      }
-    },
+    // id: "customCanvasBackgroundImage",
+    // beforeDraw: (chart) => {
+    //   if (image.complete) {
+    //     const ctx = chart.ctx;
+    //     const { top, left, width, height } = chart.chartArea;
+    //     // const x = left + width / 2 - image.width / 2;
+    //     // const y = top + height / 2 - image.height / 2;
+    //     ctx.drawImage(image, left, top, width, height);
+    //   } else {
+    //     image.onload = () => chart.draw();
+    //   }
+    // },
   };
   // Setup Location Chart
 
@@ -41,23 +41,18 @@
       datasets: [
         {
           label: "User Live Location",
-          data: [
-            {
-              x: $location.x,
-              y: $location.y,
-            },
-          ],
+          data: [],
           backgroundColor: "rgb(255, 0, 0)",
         },
         {
           label: "User Past Locations",
-          data: $previousLocations,
+          data: [],
           backgroundColor: "rgb(0, 255, 0)",
         },
         {
           label: "Beacon Locations",
           data: [],
-          backgroundColor: "rgb(0, 0, 255)",
+          backgroundColor: "rgba(0, 0, 255, 0.5)",
         },
       ],
     };
@@ -69,12 +64,17 @@
       options: {
         aspectRatio: 1,
         animations: true,
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
         scales: {
           x: {
             type: "linear",
             position: "bottom",
-            suggestedMin: 0,
-            suggestedMax: 10,
+            suggestedMin: -2,
+            suggestedMax: 3,
             ticks: {
               stepSize: 1,
             },
@@ -82,8 +82,8 @@
           y: {
             type: "linear",
             position: "left",
-            suggestedMin: 0,
-            suggestedMax: 10,
+            suggestedMin: -2,
+            suggestedMax: 3,
             ticks: {
               stepSize: 1,
             },
@@ -91,14 +91,25 @@
         },
       },
     };
+
     chartLoc = new Chart(locationChart, config);
+    location.subscribe((value) => {
+      // console.log(chartLoc)
+      if (!chartLoc || !data) {
+        return;
+      }
+      data.datasets[0].data.shift();
+      data.datasets[1].data.push($previousLocations[$previousLocations.length - 1]);
+      data.datasets[0].data.push($location);
+      data.datasets[1].data = data.datasets[1].data;
+      chartLoc?.update();
+    })
+
     beacons.subscribe((value) => {
       data.datasets[2].data = value.map((beacon) => {return {x: beacon.x, y: beacon.y}})
       chartLoc.update()
     })
-  });
-
-  
+  }); 
 
   // Setup Charts for kalman distances
   class BeaconChart {
@@ -217,10 +228,13 @@
 
 <div>
   <div class="w-full aspect-square p-4">
-    <canvas class="aspect-square" bind:this={locationChart} />
+    <canvas class="aspect-square bg-gray-400 outline outline-black" bind:this={locationChart} />
   </div>
   <div class="font-bold w-full text-center">
-    Location Coordinatates: ({$location.x}, {$location.y})
+    Location Coordinatates: 
+    {#if $location}
+      ({$location?.x?.toFixed(2)}, {$location?.y?.toFixed(2)})
+    {/if}
   </div>
   {#each Object.entries(charts) as [id, beaconChart]}
     <div class="w-full h-fit p-4">

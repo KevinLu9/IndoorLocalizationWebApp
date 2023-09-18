@@ -1,23 +1,29 @@
 import { writable } from "svelte/store";
-
 export const location = writable({ x: 0, y: 0 });
 export const previousLocations = writable([]);
-export const updateLocation = (location) => {
+
+export const updateLocation = (loc) => {
   previousLocations.update((items) => {
-    items.push(location);
+    items.push(loc);
     return items;
   });
-  location.set(location);
+  location.set(loc);
 };
 export const distance = writable({});
 export const kalmanDistance = writable({});
 export const distanceLabels = writable({});
 export const beacons = writable([]);
 export const distanceWorker = new Worker("workers/distance.js");
-export const positionWorker = new Worker("workers/position.js")
+export const positionWorker = new Worker("workers/position.js");
 
 const initialTime = new Date().getTime() / 1000;
+const timeLastCalculatedLocation = new Date().getTime()
 
+positionWorker.onmessage = (e) => {
+  console.log('[PositionWorker Result]', e.data);
+  updateLocation({x: e.data.x, y: e.data.y})
+  
+}
 
 // Handle new distances from Distance Worker.
 distanceWorker.onmessage = (e) => {
@@ -45,5 +51,12 @@ distanceWorker.onmessage = (e) => {
     value[e.data.id].push((e.data.time - initialTime).toFixed(1));
     return value
   })
+
+  // Only post if it has been at least one second since the last calculation
+  if (new Date().getTime() - timeLastCalculatedLocation > 1000) {
+    if (e.data.distanceVals) {
+      positionWorker.postMessage(e.data.distanceVals);
+    }
+  }
   
 }

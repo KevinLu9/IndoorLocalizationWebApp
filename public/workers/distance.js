@@ -83,12 +83,12 @@ const getLatestData = (currentTime) => {
     }
   }
   // Filter for only recent values (2 seconds ago)
-  res = res.filter((value) => {return new Date().getTime() - value.time < 1000})
-
-  // Get 3 smallest values
-  if (res.length >= 3) {
+  res = res.filter((value) => {return new Date().getTime() - value.time < 1500})
+  // console.log('res', res)02
+  // Get 4 smallest values
+  if (res.length >= 4) {
     res = res.sort((a, b) => a.kalmanDistance - b.kalmanDistance)
-    res = res.slice(0, 3);
+    res = res.slice(0, 4);
     res.forEach((value) => {
       bluetoothDataDict[value.id].latestUsed = true;
     })
@@ -106,13 +106,10 @@ onmessage = ({ data }) => {
     let kalman_distance;
     const currentTime = new Date().getTime();
     [distance, kalman_distance] = bluetoothDataDict[data.values.id].addData(currentTime, data.values.rssi);
-
-    workerResult = {distance, kalman_distance, id: data.values.id, time: currentTime / 1000};
     const distanceVals = getLatestData(currentTime);
     // console.log('[LOCATION] distanceVals: ', distanceVals)
-    if (distanceVals) {
-
-    }
+    workerResult = {distance, kalman_distance, id: data.values.id, time: currentTime / 1000, x: bluetoothDataDict[data.values.id].x, y: bluetoothDataDict[data.values.id].y, distanceVals};
+    
 
   } else if (data.command == "device") {
     // If data is a device, add to bluetooth dict

@@ -12,7 +12,7 @@
   } from "heroicons-for-svelte/icons/outline";
   import Chart from "chart.js/auto";
   import { url } from "@roxi/routify";
-  import { distanceWorker } from "../store";
+  import { distanceWorker, positionWorker } from "../store";
   import { api } from "../api";
   import { beacons } from "../store";
 
@@ -27,6 +27,10 @@
   $: {
     beacons.set(Object.values(bluetoothDataDict).map((value) => {return {id: value.id, txPower: value.txPower, name: value.name, x: value.x, y: value.y, z: value.z}}));
   };
+
+  $: {
+    bluetoothDataDict;
+  }
 
   // Distance worker Setup
   // distanceWorker.onmessage = (e) => {
@@ -153,6 +157,7 @@
      */
     addRSSI(rssi) {
       this.rssi.push(rssi);
+      bluetoothDataDict = bluetoothDataDict;
       if (this.currentIndex >= this.maxPointsShow) {
         // Shift all the values left by one
         for (let i = 0; i < this.maxPointsShow - 1; i++) {
@@ -180,7 +185,7 @@
       this.txPower = txPower;
     }
   }
-
+onMount(() => {
   // get bluetooth beacons from api
   api.get_beacon().then((res) => {
     // console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
@@ -201,6 +206,8 @@
         });
     })
   })
+})
+  
 
   const getCurrentTime = (ms_time) => {
     let time = new Date();
@@ -438,6 +445,7 @@
           <h1 class="font-bold">Name: {bluetoothDataDict[id].name}</h1>
           <h2>ID: {id}</h2>
           <h2>txPower: {bluetoothDataDict[id].txPower}dB</h2>
+          <h2>RSSI: {bluetoothDataDict[id].rssi[bluetoothDataDict[id].rssi.length - 1]}</h2>
           <h2>Click on Map to View RSSI</h2>
           <canvas
             class="outline"

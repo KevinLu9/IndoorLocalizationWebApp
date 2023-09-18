@@ -2,7 +2,7 @@
   import { api } from "../../api.js";
   import { beacons } from "../../store.js";
 
-  let ble_beacons;
+  let ble_beacons = [];
   let isLoading = false;
   let isSuccess = false;
   let isError = false;
@@ -10,13 +10,17 @@
   let topDiv;
 
   beacons.subscribe(value => {
-    ble_beacons = value;
+    value.forEach((beacon) => {
+      if (ble_beacons.filter((item) => item.id == beacon.id).length <= 0) {
+        ble_beacons.push(beacon);
+        ble_beacons = ble_beacons;
+      }
+    });
   })
-  $: {
-    console.log({topDiv});
-  }
+
 
   const updateBeacon = (beacon) => {
+    console.log(beacon)
     currentBeacon = beacon;
     isLoading = true;
     api.update_beacon(beacon.id, beacon.name, beacon.txPower, beacon.x, beacon.y, beacon.z)
