@@ -17,7 +17,7 @@
         if (beaconToShow) {
             beaconToShow = $beacons.filter((beacon) => beacon.id == beaconToShow.id)[0]
         }
-        console.log(beaconToShow)
+        // console.log(beaconToShow)
     }
     
 </script>
