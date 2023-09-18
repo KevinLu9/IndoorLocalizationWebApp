@@ -35,6 +35,8 @@ components:
           type: "number"
         z:
           type: "number"
+        content:
+          type: "string"
     Locations:
       type: "object"
       required: ["id"]

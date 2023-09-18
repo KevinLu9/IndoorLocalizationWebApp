@@ -29,6 +29,7 @@ class Beacon(db.Model):
     x = db.Column(db.Float)
     y = db.Column(db.Float)
     z = db.Column(db.Float)
+    content = db.Column(db.String())
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow
     )

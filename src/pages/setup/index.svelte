@@ -1,6 +1,7 @@
 <script>
   import { api } from "../../api.js";
   import { beacons } from "../../store.js";
+  import Editor from '@tinymce/tinymce-svelte';
 
   let ble_beacons = [];
   let isLoading = false;
@@ -8,6 +9,8 @@
   let isError = false;
   let currentBeacon;
   let topDiv;
+  let customHTML;
+  let selectedBeaconForContentSave;
 
   beacons.subscribe(value => {
     value.forEach((beacon) => {
@@ -18,12 +21,11 @@
     });
   })
 
-
   const updateBeacon = (beacon) => {
     console.log(beacon)
     currentBeacon = beacon;
     isLoading = true;
-    api.update_beacon(beacon.id, beacon.name, beacon.txPower, beacon.x, beacon.y, beacon.z)
+    api.update_beacon({id: beacon.id, name: beacon.name, txPower: beacon.txPower, x: beacon.x, y: beacon.y, z: beacon.z})
     .then((res) => {
       console.log("updateBeacon: ", res);
       if (!res.error) {
@@ -39,6 +41,29 @@
       }, "4000");
     })
   } 
+
+  const updateBeaconContent = (beacon) => {
+    console.log(beacon)
+    currentBeacon = beacon;
+    isLoading = true;
+    console.log(beacon.id, customHTML)
+    api.update_beacon({id: beacon.id, content: customHTML})
+    .then((res) => {
+      console.log("updateBeacon: ", res);
+      if (!res.error) {
+        isSuccess = true;
+        topDiv.focus();
+      } else {
+        isError = true;
+      }
+      isLoading = false;
+      setTimeout(() => {
+        isError = false;
+        isSuccess = false;
+      }, "4000");
+    })
+  } 
+
 </script>
 
 <template>
@@ -91,5 +116,42 @@
         </li>
       {/each}
     </ul>
+    <div class="w-full h-full px-4">
+      <h1 class="font-bold text-2xl text-center my-2">Display Editor</h1>
+      <h2 class="text-center mb-2">Change the content associated with each beacon.</h2>
+      <div class="w-full flex justify-center mb-2">
+        <select class="select select-warning max-w-xs w-full" bind:value={selectedBeaconForContentSave} on:change={() => {customHTML = selectedBeaconForContentSave.content || "Empty"}}>
+          <option disabled selected value={undefined}>Select Beacon</option>
+            {#each ble_beacons as beacon}
+              <option value={beacon}>{beacon.id}</option>
+            {/each}
+        </select>
+      </div>
+      
+      <Editor
+      class="w-full h-full"
+      disabled={!selectedBeaconForContentSave}
+      apiKey='0ow2pzndz0pfd60uq2ifx71mk5xs0m09ksr0a4ah68d244my'
+      bind:value={customHTML}
+    />
+    </div>
+    
+
+    <div class="flex flex-col w-full items-center justify-center">
+      <div class="divider" />
+      
+      <p class="font-bold">HTML String</p>
+      <div class="overflow-auto w-full h-full">
+        <p class="inline-block">{customHTML}</p>
+      </div>
+      
+      <div class="divider" />
+    </div>
+    
+  </div>
+  <p class="font-bold text-center">Rendered HTML</p>
+  <div class="m-4 p-4 bg-200-600 rounded-lg border border-black no-tailwindcss-base">{@html customHTML}</div>
+  <div class="m-4 p-4 flex justify-end">
+    <button class="btn btn-warning ml-2" on:click={() => {updateBeaconContent(selectedBeaconForContentSave)}}>Save</button>
   </div>
 </template>

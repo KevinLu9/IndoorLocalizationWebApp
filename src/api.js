@@ -37,11 +37,12 @@ api.create_beacon = async function create_beacon(id, name, txPower, x, y, z) {
   return {error, data}
 }
 
-api.update_beacon = async function update_beacon(id, name, txPower, x, y, z) {
+api.update_beacon = async function update_beacon(newData) {
+  // Details can be: {id, name, txPower, x, y, z, content}
   const api_url = `${api.URL}beacon`;
   let error = undefined;
   let data = undefined;
-  await axios.patch(api_url, {id, name, txPower, x, y, z})
+  await axios.patch(api_url, newData)
   .then((res) => {
     data = res.data;
   })

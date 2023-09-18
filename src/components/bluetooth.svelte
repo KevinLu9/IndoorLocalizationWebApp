@@ -25,7 +25,7 @@
   let isScanning = false;
   let confirmModalDiv;
   $: {
-    beacons.set(Object.values(bluetoothDataDict).map((value) => {return {id: value.id, txPower: value.txPower, name: value.name, x: value.x, y: value.y, z: value.z}}));
+    beacons.set(Object.values(bluetoothDataDict).map((value) => {return {id: value.id, txPower: value.txPower, name: value.name, x: value.x, y: value.y, z: value.z, content: value.content}}));
   };
 
   $: {
@@ -88,7 +88,7 @@
      * @param {*} rssi : The received signal strength indicator values received from the beacon
      * @param {*} txPower : The transmission power of the beacon in dBm
      */
-    constructor(id, name, txPower, x, y, z, rssi, time) {
+    constructor(id, name, txPower, x, y, z, content, rssi, time) {
       this.name = name;
       this.id = id;
       this.x = x;
@@ -97,6 +97,7 @@
       this.time = [];
       this.rssi = [];
       this.txPower = txPower;
+      this.content = content;
 
       // Set up Chart attributes
       this.chart = null;
@@ -197,6 +198,7 @@ onMount(() => {
         beacon.x,
         beacon.y,
         beacon.z,
+        beacon.content,
         0,
         new Date().getTime()
       );
