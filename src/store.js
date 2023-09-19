@@ -21,8 +21,8 @@ const timeLastCalculatedLocation = new Date().getTime()
 
 positionWorker.onmessage = (e) => {
   console.log('[PositionWorker Result]', e.data);
-  updateLocation({x: e.data.x, y: e.data.y})
-  
+  updateLocation({ x: e.data.x, y: e.data.y })
+
 }
 
 // Handle new distances from Distance Worker.
@@ -53,10 +53,10 @@ distanceWorker.onmessage = (e) => {
   })
 
   // Only post if it has been at least one second since the last calculation
-  if (new Date().getTime() - timeLastCalculatedLocation > 1000) {
+  if (new Date().getTime() - timeLastCalculatedLocation > 500) {
     if (e.data.distanceVals) {
       positionWorker.postMessage(e.data.distanceVals);
     }
   }
-  
+
 }
