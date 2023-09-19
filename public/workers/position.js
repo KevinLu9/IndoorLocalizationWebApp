@@ -7,6 +7,65 @@ if (typeof Worker == "undefined") {
   throw new Error("Device does not support Web Workers!");
 }
 
+// // // Kalman filter
+// let previousCorrected_X = kFilter.getInitState();
+// let previousCorrected_Y = kFilter.getInitState();
+// let predicted_X;
+// let predicted_Y;
+
+// onmessage = ({data}) => {
+//   // Assume 4 beacons are given
+//   const x = [];
+//   const y = [];
+//   const z = [];
+//   const d = [];
+//   data.forEach((item, index) => {
+//     x.push(item.x);
+//     y.push(item.y);
+//     z.push(item.z);
+//     d.push(item.kalmanDistance);
+//   })
+
+//   const G = [
+//     [x[1] - x[0], y[1] - y[0], z[1] - z[0]],
+//     [x[3] - x[0], y[2] - y[0], z[2] - z[0]], 
+//     [x[2] - x[0], y[3] - y[0], z[3] - z[0]]
+//   ]
+//   const h = [
+//     [0.5 * (x[1]**2 + y[1]**2 + z[1]**2 - x[0]**2 - y[0]**2 - d[1]**2 + d[0]**2)],
+//     [0.5 * (x[2]**2 + y[2]**2 + z[2]**2 - x[0]**2 - y[0]**2 - d[2]**2 + d[0]**2)], 
+//     [0.5 * (x[3]**2 + y[3]**2 + z[3]**2 - x[0]**2 - y[0]**2 - d[3]**2 + d[0]**2)]
+//   ]
+
+
+//   let p_x;
+//   let p_y;
+//   let p_z;
+
+//   [p_x, p_y, p_z] = math.transpose(math.multiply(math.pinv(G), h))[0];
+
+//   // Apply kalman filter on locations
+//   predicted_X = kFilter.predict({previousCorrected: previousCorrected_X});
+//   previousCorrected_X = kFilter.correct({
+//       predicted: predicted_X,
+//       observation: [p_x],
+//     });
+//   p_x = previousCorrected_X.mean.map(m => m[0])[0];
+
+//   predicted_Y = kFilter.predict({previousCorrected: previousCorrected_Y});
+//   previousCorrected_Y = kFilter.correct({
+//       predicted: predicted_Y,
+//       observation: [p_y],
+//     });
+//   p_y = previousCorrected_Y.mean.map(m => m[0])[0];
+
+//   previousPredictedLocation = {x: p_x, y: p_y};
+
+//   postMessage({x: p_x, y: p_y, z: p_z});
+// }
+
+
+// 2D implementation
 // // Kalman filter
 let previousCorrected_X = kFilter.getInitState();
 let previousCorrected_Y = kFilter.getInitState();
@@ -27,15 +86,16 @@ onmessage = ({data}) => {
   })
 
   const G = [
-    [x[1] - x[0], y[1] - y[0], z[1] - z[0]],
-    [x[3] - x[0], y[2] - y[0], z[2] - z[0]], 
-    [x[2] - x[0], y[3] - y[0], z[3] - z[0]]
+    [x[1] - x[0], y[1] - y[0]],
+    [x[2] - x[0], y[2] - y[0]], 
+
   ]
   const h = [
-    [0.5 * (x[1]**2 + y[1]**2 + z[1]**2 - x[0]**2 - y[0]**2 - d[1]**2 + d[0]**2)], 
-    [0.5 * (x[2]**2 + y[2]**2 + z[2]**2 - x[0]**2 - y[0]**2 - d[2]**2 + d[0]**2)], 
-    [0.5 * (x[3]**2 + y[3]**2 + z[3]**2 - x[0]**2 - y[0]**2 - d[3]**2 + d[0]**2)]
+    [0.5 * (x[1]**2 + y[1]**2 - x[0]**2 - y[0]**2 - d[1]**2 + d[0]**2)],
+    [0.5 * (x[2]**2 + y[2]**2 - x[0]**2 - y[0]**2 - d[2]**2 + d[0]**2)]
   ]
+
+
   let p_x;
   let p_y;
   let p_z;

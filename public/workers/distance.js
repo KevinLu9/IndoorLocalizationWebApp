@@ -1,6 +1,6 @@
 // Distance Webworker Calculator using Bluetooth RSSI Values
 importScripts('kalman-filter.js')
-var {KalmanFilter} = kalmanFilter;
+var { KalmanFilter } = kalmanFilter;
 const kFilter = new KalmanFilter();
 if (typeof Worker == "undefined") {
   throw new Error("Device does not support Web Workers!");
@@ -31,9 +31,9 @@ class BluetoothBeacon {
     // Keep length within maxBufferSize
     if (rssi.length >= this.maxBufferSize) {
       this.rssi.shift();
-        this.time.shift();
-        this.distance.shift();
-        this.kalmanDistance.shift();
+      this.time.shift();
+      this.distance.shift();
+      this.kalmanDistance.shift();
     }
     // Add new values
     this.rssi.push(rssi);
@@ -50,17 +50,17 @@ class BluetoothBeacon {
   getLatestData() {
     // Gets the latest data from the beacon
     if (this.rssi.length > 0 && !this.latestUsed) {
-      return {'time': this.time[this.time.length - 1], 'rssi': this.rssi[this.rssi.length - 1], 'distance': this.distance[this.distance.length - 1], 'kalmanDistance': this.kalmanDistance[this.kalmanDistance.length - 1], x:this.x, y:this.y, z:this.z, id: this.id};
+      return { 'time': this.time[this.time.length - 1], 'rssi': this.rssi[this.rssi.length - 1], 'distance': this.distance[this.distance.length - 1], 'kalmanDistance': this.kalmanDistance[this.kalmanDistance.length - 1], x: this.x, y: this.y, z: this.z, id: this.id };
     }
     return null;
   }
   calculateDistance(rssi) {
     // Calculates distance using Log-Distance path loss model
-    return e **(-(this.txPower + rssi) / (10 * n) );
+    return e ** (-(this.txPower + rssi) / (10 * n));
   }
   runKalmanFilter = (data) => {
     // Kalman filter for the data
-    const predicted = kFilter.predict({previousCorrected: this.previousCorrected});
+    const predicted = kFilter.predict({ previousCorrected: this.previousCorrected });
     this.previousCorrected = kFilter.correct({
       predicted,
       observation: data,
@@ -79,16 +79,16 @@ const getLatestData = (currentTime) => {
       if (latestData) {
         res.push(latestData);
       }
-      
+
     }
   }
   // Filter for only recent values (2 seconds ago)
-  res = res.filter((value) => {return new Date().getTime() - value.time < 1500})
+  res = res.filter((value) => { return new Date().getTime() - value.time < 1500 })
   // console.log('res', res)02
   // Get 4 smallest values
-  if (res.length >= 4) {
+  if (res.length >= 3) {
     res = res.sort((a, b) => a.kalmanDistance - b.kalmanDistance)
-    res = res.slice(0, 4);
+    res = res.slice(0, 3);
     res.forEach((value) => {
       bluetoothDataDict[value.id].latestUsed = true;
     })
@@ -108,8 +108,8 @@ onmessage = ({ data }) => {
     [distance, kalman_distance] = bluetoothDataDict[data.values.id].addData(currentTime, data.values.rssi);
     const distanceVals = getLatestData(currentTime);
     // console.log('[LOCATION] distanceVals: ', distanceVals)
-    workerResult = {distance, kalman_distance, id: data.values.id, time: currentTime / 1000, x: bluetoothDataDict[data.values.id].x, y: bluetoothDataDict[data.values.id].y, distanceVals};
-    
+    workerResult = { distance, kalman_distance, id: data.values.id, time: currentTime / 1000, x: bluetoothDataDict[data.values.id].x, y: bluetoothDataDict[data.values.id].y, distanceVals };
+
 
   } else if (data.command == "device") {
     // If data is a device, add to bluetooth dict
