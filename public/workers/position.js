@@ -85,22 +85,33 @@ onmessage = ({data}) => {
     d.push(item.kalmanDistance);
   })
 
-  const G = [
-    [x[1] - x[0], y[1] - y[0]],
-    [x[2] - x[0], y[2] - y[0]], 
+  // const G = [
+  //   [x[1] - x[0], y[1] - y[0]],
+  //   [x[2] - x[0], y[2] - y[0]], 
 
-  ]
-  const h = [
-    [0.5 * (x[1]**2 + y[1]**2 - x[0]**2 - y[0]**2 - d[1]**2 + d[0]**2)],
-    [0.5 * (x[2]**2 + y[2]**2 - x[0]**2 - y[0]**2 - d[2]**2 + d[0]**2)]
-  ]
+  // ]
+  // const h = [
+  //   [0.5 * (x[1]**2 - x[0]**2 + y[1]**2 - y[0]**2 - d[1]**2 + d[0]**2)],
+  //   [0.5 * (x[2]**2 - x[0]**2  + y[2]**2 - y[0]**2 - d[2]**2 + d[0]**2)]
+  // ]
 
+  // let p_x;
+  // let p_y;
+  // let p_z;
 
-  let p_x;
-  let p_y;
-  let p_z;
+  // [p_x, p_y, p_z] = math.transpose(math.multiply(math.pinv(G), h))[0];
 
-  [p_x, p_y, p_z] = math.transpose(math.multiply(math.pinv(G), h))[0];
+  const A = -2*x[0] + 2*x[1];
+  const B = -2*y[0] + 2*y[1];
+  const C = d[0]**2 - d[1]**2 - x[0]**2 + x[1]**2 - y[0]**2 + y[1]**2;
+  const D = -2*x[1] + 2*x[2];
+  const E = -2*y[1] + 2*y[2];
+  const F = d[1]**2 - d[2]**2 - x[1]**2 + x[2]**2 - y[1]**2 + y[2]**2;
+
+  const p_x = (C*E - B*F) / (A*E - B*D);
+  const p_y = (A*F - C*D) / (A*E - B*D);
+  const p_z = 0;
+  
 
   // Apply kalman filter on locations
   predicted_X = kFilter.predict({previousCorrected: previousCorrected_X});
