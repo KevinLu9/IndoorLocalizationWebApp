@@ -108,9 +108,9 @@ onmessage = ({data}) => {
   const E = -2*y[1] + 2*y[2];
   const F = d[1]**2 - d[2]**2 - x[1]**2 + x[2]**2 - y[1]**2 + y[2]**2;
 
-  const p_x = (C*E - B*F) / (A*E - B*D);
-  const p_y = (A*F - C*D) / (A*E - B*D);
-  const p_z = 0;
+  let p_x = (C*E - B*F) / (A*E - B*D);
+  let p_y = (A*F - C*D) / (A*E - B*D);
+  let p_z = 0;
   
 
   // Apply kalman filter on locations
