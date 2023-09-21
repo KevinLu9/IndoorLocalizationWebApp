@@ -8,7 +8,7 @@
     distance,
     kalmanDistance,
     distanceLabels,
-    distanceWorker, 
+    distanceWorker,
     beacons,
   } from "../../store.js";
 
@@ -99,21 +99,25 @@
         return;
       }
       data.datasets[0].data.shift();
-      data.datasets[1].data.push($previousLocations[$previousLocations.length - 1]);
+      data.datasets[1].data.push(
+        $previousLocations[$previousLocations.length - 1]
+      );
       data.datasets[0].data.push($location);
       data.datasets[1].data = data.datasets[1].data;
       chartLoc?.update();
-    })
+    });
 
     beacons.subscribe((value) => {
-      data.datasets[2].data = value.map((beacon) => {return {x: beacon.x, y: beacon.y}})
-      chartLoc.update()
-    })
-  }); 
+      data.datasets[2].data = value.map((beacon) => {
+        return { x: beacon.x, y: beacon.y };
+      });
+      chartLoc.update();
+    });
+  });
 
   // Setup Charts for kalman distances
   class BeaconChart {
-    constructor(id, chartWidth = 10) {
+    constructor(id, chartWidth = 40) {
       this.chartDiv = undefined;
       this.CHARTWIDTH = chartWidth;
       this.distanceData = [0];
@@ -196,42 +200,47 @@
       this.latestDistance = dist;
       this.latestKalmanDistance = kalman_dist;
       this.chart?.update();
-      charts=charts;
+      charts = charts;
     }
   }
 
   let charts = {};
   $beacons.forEach((beacon) => {
     charts[beacon.id] = new BeaconChart(beacon.id);
-  })
+  });
 
   beacons.subscribe((value) => {
     value.forEach((beacon) => {
       if (!charts[beacon.id]) {
         charts[beacon.id] = new BeaconChart(beacon.id);
       }
+    });
+  });
 
-    })
-  })
-  
   distanceLabels.subscribe((value) => {
     // console.log('distanceLabels updated: ', value)
     Object.entries(value).forEach(([id, labels]) => {
       if (charts[id]?.labels?.length == labels.length) {
-        return
+        return;
       }
-      charts[id].addData(labels[labels.length - 1], $distance[id][$distance[id].length - 1], $kalmanDistance[id][$kalmanDistance[id].length - 1]);
-    })
-  })
-
+      charts[id].addData(
+        labels[labels.length - 1],
+        $distance[id][$distance[id].length - 1],
+        $kalmanDistance[id][$kalmanDistance[id].length - 1]
+      );
+    });
+  });
 </script>
 
 <div>
   <div class="w-full aspect-square p-4">
-    <canvas class="aspect-square bg-gray-400 outline outline-black" bind:this={locationChart} />
+    <canvas
+      class="aspect-square bg-gray-400 outline outline-black"
+      bind:this={locationChart}
+    />
   </div>
   <div class="font-bold w-full text-center">
-    Location Coordinatates: 
+    Location Coordinatates:
     {#if $location}
       ({$location?.x?.toFixed(2)}, {$location?.y?.toFixed(2)})
     {/if}

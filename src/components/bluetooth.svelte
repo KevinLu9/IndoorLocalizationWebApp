@@ -25,8 +25,20 @@
   let isScanning = false;
   let confirmModalDiv;
   $: {
-    beacons.set(Object.values(bluetoothDataDict).map((value) => {return {id: value.id, txPower: value.txPower, name: value.name, x: value.x, y: value.y, z: value.z, content: value.content}}));
-  };
+    beacons.set(
+      Object.values(bluetoothDataDict).map((value) => {
+        return {
+          id: value.id,
+          txPower: value.txPower,
+          name: value.name,
+          x: value.x,
+          y: value.y,
+          z: value.z,
+          content: value.content,
+        };
+      })
+    );
+  }
 
   $: {
     bluetoothDataDict;
@@ -96,6 +108,8 @@
       this.z = z;
       this.time = [];
       this.rssi = [];
+      this.averageRSSIBuffSize = 20;
+      this.averageRSSIBuffer = [];
       this.txPower = txPower;
       this.content = content;
 
@@ -158,6 +172,12 @@
      */
     addRSSI(rssi) {
       this.rssi.push(rssi);
+
+      if (this.averageRSSIBuffer.length >= this.averageRSSIBuffSize) {
+        this.averageRSSIBuffer.shift();
+      }
+      this.averageRSSIBuffer.push(rssi);
+
       bluetoothDataDict = bluetoothDataDict;
       if (this.currentIndex >= this.maxPointsShow) {
         // Shift all the values left by one
@@ -186,30 +206,35 @@
       this.txPower = txPower;
     }
   }
-onMount(() => {
-  // get bluetooth beacons from api
-  api.get_beacon().then((res) => {
-    // console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
-    res?.data?.forEach((beacon) => {
-      bluetoothDataDict[beacon.id] = new BluetoothBeacon(
-        beacon.id,
-        beacon.name,
-        beacon.txPower,
-        beacon.x,
-        beacon.y,
-        beacon.z,
-        beacon.content,
-        0,
-        new Date().getTime()
-      );
-      distanceWorker.postMessage({
+  onMount(() => {
+    // get bluetooth beacons from api
+    api.get_beacon().then((res) => {
+      // console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
+      res?.data?.forEach((beacon) => {
+        bluetoothDataDict[beacon.id] = new BluetoothBeacon(
+          beacon.id,
+          beacon.name,
+          beacon.txPower,
+          beacon.x,
+          beacon.y,
+          beacon.z,
+          beacon.content,
+          0,
+          new Date().getTime()
+        );
+        distanceWorker.postMessage({
           command: "device",
-          values: { id: beacon.id, txPower: beacon.txPower, x: beacon.x, y: beacon.y, z: beacon.z },
+          values: {
+            id: beacon.id,
+            txPower: beacon.txPower,
+            x: beacon.x,
+            y: beacon.y,
+            z: beacon.z,
+          },
         });
-    })
-  })
-})
-  
+      });
+    });
+  });
 
   const getCurrentTime = (ms_time) => {
     let time = new Date();
@@ -233,19 +258,26 @@ onMount(() => {
   };
 
   const logDataView = (labelOfDataSource, key, valueDataView) => {
-  const hexString = [...new Uint8Array(valueDataView.buffer)].map(b => {
-    return b.toString(16).padStart(2, '0');
-  }).join(' ');
-  const textDecoder = new TextDecoder('ascii');
-  const asciiString = textDecoder.decode(valueDataView.buffer);
-  console.log(`  ${labelOfDataSource} Data: ` + key +
-      '\n    (Hex) ' + hexString +
-      '\n    (ASCII) ' + asciiString);
-};
+    const hexString = [...new Uint8Array(valueDataView.buffer)]
+      .map((b) => {
+        return b.toString(16).padStart(2, "0");
+      })
+      .join(" ");
+    const textDecoder = new TextDecoder("ascii");
+    const asciiString = textDecoder.decode(valueDataView.buffer);
+    console.log(
+      `  ${labelOfDataSource} Data: ` +
+        key +
+        "\n    (Hex) " +
+        hexString +
+        "\n    (ASCII) " +
+        asciiString
+    );
+  };
 
   // Process Advertisement data and display onto the GUI
   const OnAdvertisementReceived = (event) => {
-    let manufacturer = undefined
+    let manufacturer = undefined;
     event?.manufacturerData?.forEach((valueDataView, key) => {
       if (key != 61166) {
         return;
@@ -253,16 +285,17 @@ onMount(() => {
       manufacturer = valueDataView;
     }); // Find key with 0xEEEE manufacturer
     if (manufacturer) {
-      const manufacturerID = [...new Uint8Array(manufacturer.buffer)].map(b => {
-          return b.toString(16).padStart(2, '0');
-        }).join(' ');
+      const manufacturerID = [...new Uint8Array(manufacturer.buffer)]
+        .map((b) => {
+          return b.toString(16).padStart(2, "0");
+        })
+        .join(" ");
       if (bluetoothDataDict[manufacturerID] != undefined) {
+        //   event.manufacturerData.forEach((valueDataView, key) => {
+        //     logDataView('Manufacturer: ', key, valueDataView);
+        // });
+        // Set id as manufacturer information
 
-      //   event.manufacturerData.forEach((valueDataView, key) => {
-      //     logDataView('Manufacturer: ', key, valueDataView);
-      // });
-      // Set id as manufacturer information
-      
         // Add data to existing device in dictionary
         let time = new Date().getTime();
         bluetoothDataDict[manufacturerID].addTime(time);
@@ -283,15 +316,29 @@ onMount(() => {
           null,
           null,
           event.rssi,
-          new Date().getTime(),
+          new Date().getTime()
         );
-        api.create_beacon(manufacturerID, event.device.name, event.txPower, 0, 0, 0)
-        .then((res) => {
-          console.log("[API] Created Beacon: ", res);
-        })
+        api
+          .create_beacon(
+            manufacturerID,
+            event.device.name,
+            event.txPower,
+            0,
+            0,
+            0
+          )
+          .then((res) => {
+            console.log("[API] Created Beacon: ", res);
+          });
         distanceWorker.postMessage({
           command: "device",
-          values: { id: manufacturerID, txPower: event.txPower, x: 0, y: 0, z: 0 },
+          values: {
+            id: manufacturerID,
+            txPower: event.txPower,
+            x: 0,
+            y: 0,
+            z: 0,
+          },
         });
       }
     }
@@ -447,7 +494,19 @@ onMount(() => {
           <h1 class="font-bold">Name: {bluetoothDataDict[id].name}</h1>
           <h2>ID: {id}</h2>
           <h2>txPower: {bluetoothDataDict[id].txPower}dB</h2>
-          <h2>RSSI: {bluetoothDataDict[id].rssi[bluetoothDataDict[id].rssi.length - 1]}</h2>
+          <h2>
+            RSSI: {bluetoothDataDict[id].rssi[
+              bluetoothDataDict[id].rssi.length - 1
+            ]}
+          </h2>
+          {#if bluetoothDataDict[id].averageRSSIBuffer.length > 0}
+            <h2>
+              RSSI AVG: {(1 / bluetoothDataDict[id].averageRSSIBuffer.length) *
+                bluetoothDataDict[id].averageRSSIBuffer?.reduce(
+                  (acc, val) => acc + val
+                )}
+            </h2>
+          {/if}
           <h2>Click on Map to View RSSI</h2>
           <canvas
             class="outline"

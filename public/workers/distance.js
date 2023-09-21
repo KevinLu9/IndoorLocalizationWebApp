@@ -1,13 +1,17 @@
 // Distance Webworker Calculator using Bluetooth RSSI Values
-importScripts('kalman-filter.js')
-var { KalmanFilter } = kalmanFilter;
-const kFilter = new KalmanFilter();
+// importScripts('kalman-filter.js')
+// var { KalmanFilter } = kalmanFilter;
+// const kFilter = new KalmanFilter({
+
+// });
+importScripts('kalman.js');
+
 if (typeof Worker == "undefined") {
   throw new Error("Device does not support Web Workers!");
 }
 
 let bluetoothDataDict = {};
-let n = 2;//1.15416;
+let n = 1.15416; // 2;//1.15416;
 let e = 2.718;
 // Bluetooth Beacon Class (locally stored for distance worker)
 class BluetoothBeacon {
@@ -24,7 +28,8 @@ class BluetoothBeacon {
     this.latestUsed = false;
     // this.flagged = [];
     this.maxBufferSize = 20;
-    this.previousCorrected = kFilter.getInitState();
+    // this.previousCorrected = kFilter.getInitState();
+    this.kalman = new KalmanFilter(0.9, 1, 0.4);
   }
   addData(time, rssi) {
     // Adds new data to the beacon
@@ -41,7 +46,7 @@ class BluetoothBeacon {
     this.latestUsed = false;
     // Calculate distance with and without kalman filter based on the rssi
     const dist = this.calculateDistance(rssi);
-    const kalmanDist = this.runKalmanFilter([dist]);
+    const kalmanDist = this.runKalmanFilter(dist);
     this.distance.push(dist);
     this.kalmanDistance.push(kalmanDist);
 
@@ -60,12 +65,15 @@ class BluetoothBeacon {
   }
   runKalmanFilter = (data) => {
     // Kalman filter for the data
-    const predicted = kFilter.predict({ previousCorrected: this.previousCorrected });
-    this.previousCorrected = kFilter.correct({
-      predicted,
-      observation: data,
-    });
-    return this.previousCorrected.mean.map(m => m[0])[0];
+    // const predicted = kFilter.predict({ previousCorrected: this.previousCorrected });
+    // this.previousCorrected = kFilter.correct({
+    //   predicted,
+    //   observation: data,
+    //   covariance:
+    // });
+    // return this.previousCorrected.mean.map(m => m[0])[0];
+    return this.kalman.calculateKalman(data);
+    // return data;
   }
 }
 

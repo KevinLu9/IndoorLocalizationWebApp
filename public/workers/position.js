@@ -65,8 +65,62 @@ if (typeof Worker == "undefined") {
 // }
 
 
+
+// let previousCorrected_X = kFilter.getInitState();
+// let previousCorrected_Y = kFilter.getInitState();
+// let predicted_X;
+// let predicted_Y;
+// // const data = [{x: 0, y: 3, z: 1, kalmanDistance: 3}, {x:3 , y: 0, z: 1, kalmanDistance: 3}, {x: 3, y: 3, z: 1, kalmanDistance: 4.2426}]
+// const data = [{x: 0, y: 3, z: 1, kalmanDistance: 3}, {x:3 , y: 0, z: 1, kalmanDistance: 3}, {x: 3, y: 3, z: 1, kalmanDistance: 0}]
+
+// // Assume 4 beacons are given
+// const x = [];
+// const y = [];
+// const z = [];
+// const d = [];
+// data.forEach((item, index) => {
+//   x.push(item.x);
+//   y.push(item.y);
+//   z.push(item.z);
+//   d.push(item.kalmanDistance);
+// })
+
+// const A = -2*x[0] + 2*x[1];
+// const B = -2*y[0] + 2*y[1];
+// const C = d[0]**2 - d[1]**2 - x[0]**2 + x[1]**2 - y[0]**2 + y[1]**2;
+// const D = -2*x[1] + 2*x[2];
+// const E = -2*y[1] + 2*y[2];
+// const F = d[1]**2 - d[2]**2 - x[1]**2 + x[2]**2 - y[1]**2 + y[2]**2;
+
+// let p_x = (C*E - B*F) / (A*E - B*D);
+// let p_y = (A*F - C*D) / (A*E - B*D);
+// let p_z = 0;
+
+
+// // Apply kalman filter on locations
+// predicted_X = kFilter.predict({previousCorrected: previousCorrected_X});
+// previousCorrected_X = kFilter.correct({
+//     predicted: predicted_X,
+//     observation: [p_x],
+//   });
+// p_x = previousCorrected_X.mean.map(m => m[0])[0];
+
+// predicted_Y = kFilter.predict({previousCorrected: previousCorrected_Y});
+// previousCorrected_Y = kFilter.correct({
+//     predicted: predicted_Y,
+//     observation: [p_y],
+//   });
+// p_y = previousCorrected_Y.mean.map(m => m[0])[0];
+
+// previousPredictedLocation = {x: p_x, y: p_y};
+// console.log({previousPredictedLocation})
+
+
+
+
+
 // 2D implementation
-// // Kalman filter
+// Kalman filter
 let previousCorrected_X = kFilter.getInitState();
 let previousCorrected_Y = kFilter.getInitState();
 let predicted_X;
