@@ -29,7 +29,7 @@ class BluetoothBeacon {
     // this.flagged = [];
     this.maxBufferSize = 20;
     // this.previousCorrected = kFilter.getInitState();
-    this.kalman = new KalmanFilter(0.9, 1, 0.4);
+    this.kalman = new KalmanFilter(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
   }
   addData(time, rssi) {
     // Adds new data to the beacon

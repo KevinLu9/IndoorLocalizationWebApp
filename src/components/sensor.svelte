@@ -31,17 +31,6 @@
 
   // --------------------------------- Sensor Implementation ---------------------------------
   // Orientation Sensor, Accelerometer Sensor, and Gyroscope Sensor
-  const PARAM = {
-    ORIENTATION_A: "Orientation_a",
-    ORIENTATION_B: "Orientation_b",
-    ORIENTATION_G: "Orientation_g",
-    ACCELEROMETER_X: "Accelerometer_x",
-    ACCELEROMETER_Y: "Accelerometer_y",
-    ACCELEROMETER_Z: "Accelerometer_z",
-    GYROSCOPE_A: "Gyroscope_a",
-    GYROSCOPE_B: "Gyroscope_b",
-    GYROSCOPE_G: "Gyroscope_g",
-  };
 
   let orientation = [0, 0, 0];
   let accelerometer = [0, 0, 0];
@@ -104,7 +93,6 @@
   }
 
   function handleMotion(event) {
-    
     accelerometer = [
       event.acceleration.x,
       event.acceleration.y,
@@ -124,18 +112,17 @@
     // curr_v_x = (kalmanValueX - prev_a_x) * (deltaTime);
     // curr_v_y = (kalmanValueY - prev_a_y) * (deltaTime);
     // console.log(16.7)
-    // console.log((deltaTime).toFixed(2)))
-
+    // console.log((deltaTime).toFixed(2));
+    let D = 0.5 * ((mean(x_arr))**2 + (mean(y_arr))**2 )**0.5 * (deltaTime)**2;
+    currentTime = new Date().getTime();
+    deltaTime = (currentTime - lastMotionTime) / 1000;
+    x += D * Math.cos(orientation[0] * Math.PI / 180);
+    y += D * Math.sin(orientation[0] * Math.PI / 180);
+    lastMotionTime = currentTime;
     count += 1;
-    if (count >= 0) {
-      let D = 0.5 * ((mean(x_arr))**2 + (mean(y_arr))**2 )**0.5 * (deltaTime)**2;
-      currentTime = new Date().getTime();
-      deltaTime = (currentTime - lastMotionTime) / 1000;
-      x += D * Math.cos(orientation[0] * Math.PI / 180);
-      y += D * Math.sin(orientation[0] * Math.PI / 180);
-      lastMotionTime = currentTime;
+    if (count >= 10) {
       count = 0;
-      console.log((x*100).toFixed(4), (y*100).toFixed(4), z.toFixed(4));
+      // console.log((x*100).toFixed(4), (y*100).toFixed(4), z.toFixed(4));
     }
     
     
