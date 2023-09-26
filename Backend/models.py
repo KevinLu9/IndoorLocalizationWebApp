@@ -8,12 +8,8 @@ class Device(db.Model):
     id = db.Column(db.String(32), primary_key=True)
     name = db.Column(db.String(32))
     txPower = db.Column(db.Integer)
-    created_at = db.Column(
-        db.DateTime, default=datetime.utcnow
-    )
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
 class DeviceSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -29,13 +25,8 @@ class Beacon(db.Model):
     x = db.Column(db.Float)
     y = db.Column(db.Float)
     z = db.Column(db.Float)
-    content = db.Column(db.String())
-    created_at = db.Column(
-        db.DateTime, default=datetime.utcnow
-    )
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
 class BeaconSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -50,15 +41,25 @@ class Location(db.Model):
     x = db.Column(db.Float)
     y = db.Column(db.Float)
     rssi = db.Column(db.Float)
-    created_at = db.Column(
-        db.DateTime, default=datetime.utcnow
-    )
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
-    )
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
 class LocationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Location
+        load_instance = True
+        sqla_session = db.session
+
+
+class Content(db.Model):
+    __tablename__ = "content"
+    id = db.Column(db.String(32), primary_key=True)
+    content = db.Column(db.String())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+class ContentSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Content
         load_instance = True
         sqla_session = db.session

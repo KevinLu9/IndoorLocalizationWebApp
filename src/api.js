@@ -52,6 +52,34 @@ api.update_beacon = async function update_beacon(newData) {
   return {error, data}
 }
 
+api.get_beacon_content = async function get_beacon_content(id) {
+  const api_url = `${api.URL}content/${id}`;
+  let error = undefined;
+  let data = undefined;
+  await axios.get(api_url)
+  .then((res) => {
+    data = res.data;
+  })
+  .catch((err) => {
+    error = err;
+  })
+  return {error, data}
+}
+
+api.update_beacon_content = async function update_beacon_content(id, content) {
+  const api_url = `${api.URL}content`;
+  let error = undefined;
+  let data = undefined;
+  await axios.patch(api_url, {id: id, content: content})
+  .then((res) => {
+    data = res.data
+  })
+  .catch((err) => {
+    error = err;
+  })
+  return {error, data}
+}
+
 api.get_device = async function get_device() {
   const api_url = `${api.URL}device`;
   let error = undefined;

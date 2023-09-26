@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import abort
 from config import db
-from models import Beacon, BeaconSchema
+from models import Beacon, BeaconSchema, Content, ContentSchema
 
 
 def get_timestamp():
@@ -21,6 +21,7 @@ def create(request):
     if Beacon.query.filter(Beacon.id == id).one_or_none() is None:
         new_beacon = BeaconSchema().load(request, session=db.session)
         db.session.add(new_beacon)
+        db.session.add(Content(id=id, content=""))
         db.session.commit()
         return BeaconSchema().dump(new_beacon), 201
     else:
@@ -31,7 +32,6 @@ def update(request):
     x = request.get("x")
     y = request.get("y")
     z = request.get("z")
-    content = request.get("content")
     txPower = request.get("txPower")
     beacon_edit = Beacon.query.filter(Beacon.id == id).one_or_none()
     if beacon_edit is not None:
@@ -43,8 +43,6 @@ def update(request):
             beacon_edit.z = z
         if txPower is not None:
             beacon_edit.txPower = txPower
-        if content is not None:
-            beacon_edit.content = content
         db.session.commit()
         return BeaconSchema().dump(beacon_edit), 201
     else:

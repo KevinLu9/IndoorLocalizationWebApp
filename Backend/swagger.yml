@@ -57,6 +57,20 @@ components:
           type: "string"
         datetime_search:
           type: "string"
+    Content:
+      type: "object"
+      required: ["id"]
+      properties:
+        id:
+          type: "string"
+        content:
+          type: "string"
+    ContentSearch:
+      type: "object"
+      required: ["id"]
+      properties:
+        id:
+          type: "string"
         
 
 
@@ -155,4 +169,35 @@ paths:
       responses:
         "204":
           description: "Successfully updated a beacon's location"
+  /content/{id}:
+    get:
+      operationId: "content.read"
+      tags: ["Content"]
+      summary: "Get the content for a beacon based on ID"
+      parameters:
+        - name: id
+          in: path
+          description: Beacon ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Successfully retrieved content"
+  /content:
+    patch:
+      operationId: "content.update"
+      tags: ["Content"]
+      summary: "Update a beacon's content"
+      requestBody:
+        description: "Beacon content to update"
+        required: True
+        content:
+          application/json:
+            schema:
+              x-body-name: "request"
+              $ref: "#/components/schemas/Content"
+      responses:
+        "204":
+          description: "Successfully updated a beacon's content"
       

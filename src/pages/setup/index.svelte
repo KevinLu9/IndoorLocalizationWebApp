@@ -9,8 +9,27 @@
   let isError = false;
   let currentBeacon;
   let topDiv;
-  let customHTML;
+  let customHTML = "Empty";
   let selectedBeaconForContentSave;
+  let beaconContent = {};
+  let isContentLoading = false;
+  let isContentError = false;
+
+  const getBeaconContent = (beacon) => {
+  isContentLoading = true;
+  // console.log('getBeaconContent: ', beacon.id)
+  api.get_beacon_content(beacon.id)
+  .then((res) => {
+    // console.log("getBeaconContent Res: ", res);
+    if (!res.error) {
+      beaconContent[beacon.id] = res?.data;
+      customHTML = res?.data[0]?.content || "Empty"
+    } else {
+      isContentError = true;
+    }
+    isContentLoading = false;
+  })
+  } 
 
   beacons.subscribe(value => {
     value.forEach((beacon) => {
@@ -27,7 +46,7 @@
     isLoading = true;
     api.update_beacon({id: beacon.id, name: beacon.name, txPower: beacon.txPower, x: beacon.x, y: beacon.y, z: beacon.z})
     .then((res) => {
-      console.log("updateBeacon: ", res);
+      // console.log("updateBeacon: ", res);
       if (!res.error) {
         isSuccess = true;
         topDiv.focus();
@@ -47,9 +66,9 @@
     currentBeacon = beacon;
     isLoading = true;
     console.log(beacon.id, customHTML)
-    api.update_beacon({id: beacon.id, content: customHTML})
+    api.update_beacon_content(beacon.id, customHTML)
     .then((res) => {
-      console.log("updateBeacon: ", res);
+      // console.log("updateBeaconContent: ", res);
       if (!res.error) {
         isSuccess = true;
         topDiv.focus();
@@ -120,7 +139,7 @@
       <h1 class="font-bold text-2xl text-center my-2">Display Editor</h1>
       <h2 class="text-center mb-2">Change the content associated with each beacon.</h2>
       <div class="w-full flex justify-center mb-2">
-        <select class="select select-warning max-w-xs w-full" bind:value={selectedBeaconForContentSave} on:change={() => {customHTML = selectedBeaconForContentSave.content || "Empty"}}>
+        <select class="select select-warning max-w-xs w-full" bind:value={selectedBeaconForContentSave} on:change={() => { getBeaconContent(selectedBeaconForContentSave)}}>
           <option disabled selected value={undefined}>Select Beacon</option>
             {#each ble_beacons as beacon}
               <option value={beacon}>{beacon.id}</option>
@@ -128,30 +147,44 @@
         </select>
       </div>
       
-      <Editor
-      class="w-full h-full"
-      disabled={!selectedBeaconForContentSave}
-      apiKey='0ow2pzndz0pfd60uq2ifx71mk5xs0m09ksr0a4ah68d244my'
-      bind:value={customHTML}
-    />
-    </div>
-    
-
-    <div class="flex flex-col w-full items-center justify-center">
-      <div class="divider" />
-      
-      <p class="font-bold">HTML String</p>
-      <div class="overflow-auto w-full h-full">
-        <p class="inline-block">{customHTML}</p>
+      {#if isContentLoading}
+        <div class="flex flex-col items-center justify-center w-full my-4">
+          <span class="loading loading-spinner loading-lg mb-2"></span>
+        </div>
+      {:else if isContentError}
+      <div class="w-full bg-error border border-black dark:border-white m-4 p-2 text-center rounded-lg">
+        <p class="text-black font-bold">Error!</p>
+        <p class="text-black">Failed to Updated Beacon with ID: {currentBeacon.id}</p>
       </div>
-      
-      <div class="divider" />
+      {:else if !selectedBeaconForContentSave}
+        <div class="flex flex-col items-center justify-center w-full my-2">
+          <p>Select a Beacon...</p>
+        </div>
+      {:else if customHTML}
+        <Editor
+          class="w-full h-full"
+          disabled={!selectedBeaconForContentSave}
+          apiKey='0ow2pzndz0pfd60uq2ifx71mk5xs0m09ksr0a4ah68d244my'
+          bind:value={customHTML}
+        />
+
+        <div class="flex flex-col w-full items-center justify-center">
+          <div class="divider" />
+          
+          <p class="font-bold">HTML String</p>
+          <div class="overflow-auto w-full h-full">
+            <textarea bind:value={customHTML} class="w-full rounded-lg border border-black p-2" rows="15" />
+          </div>
+          
+          <div class="divider" />
+          <p class="font-bold text-center">Rendered HTML</p>
+          <div class="m-4 p-4 w-full bg-200-600 rounded-lg border border-black no-tailwindcss-base">{@html customHTML}</div>
+        </div>
+        <div class="m-4 p-4 flex justify-end">
+          <button class="btn btn-warning ml-2" on:click={() => {updateBeaconContent(selectedBeaconForContentSave)}}>Save</button>
+        </div>
+      {/if}
     </div>
-    
   </div>
-  <p class="font-bold text-center">Rendered HTML</p>
-  <div class="m-4 p-4 bg-200-600 rounded-lg border border-black no-tailwindcss-base">{@html customHTML}</div>
-  <div class="m-4 p-4 flex justify-end">
-    <button class="btn btn-warning ml-2" on:click={() => {updateBeaconContent(selectedBeaconForContentSave)}}>Save</button>
-  </div>
+  
 </template>
