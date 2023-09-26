@@ -371,6 +371,7 @@
 </script>
 
 <div class="flex flex-col items-center m-4 justify-items-end">
+  <div class="font-bold text-center text-lg underline">Bluetooth</div>
   <span class="flex">
     <h1 class="pb-2 flex-shrink-0">Device has Bluetooth Module</h1>
     {#if deviceHasBluetooth}

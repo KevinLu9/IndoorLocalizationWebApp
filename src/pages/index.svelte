@@ -33,6 +33,6 @@
     </div>
 {:else}
     <div class="m-4 p-4 bg-200-600 rounded-lg border border-black no-tailwindcss-base">
-        <h3 class="text-center text-red-600">You are no nearby displays!</h3>
+        <h3 class="text-center text-red-600">There are no nearby displays!</h3>
     </div>
 {/if}

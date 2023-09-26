@@ -17,7 +17,7 @@ class KalmanFilter {
         // meas: is the new value.
         // Kalman steps
         this.kal_gain = this.est_uncertainty / (this.est_uncertainty + this.meas_uncertainty); // compute kalman gain
-        console.log('kalman gain: ', this.kal_gain);
+        // console.log('kalman gain: ', this.kal_gain);
         this.cur_est = this.prev_est + this.kal_gain * (meas - this.prev_est); // compute estimate for current time step
         this.est_uncertainty = (1 - this.kal_gain) * this.est_uncertainty + Math.abs(this.prev_est - this.cur_est) * this.q; // update estimate uncertainty
         this.prev_est = this.cur_est; // update previous estimate for next loop iteration
