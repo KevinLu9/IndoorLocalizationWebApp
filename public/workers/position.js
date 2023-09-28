@@ -110,8 +110,8 @@ const w_new = (X, y) => {
 }
 // kalman = new KalmanFilter(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
 let previousPredictedLocation = undefined;
-const EPOCH = 50;
-const learning_rate = 0.1;
+const EPOCH = 100; //50;
+const learning_rate = 0.5; //0.1;
 const kalmanX = new KalmanFilter(0.5, 0.5, 0.4);
 const kalmanY = new KalmanFilter(0.5, 0.5, 0.4);
 
@@ -119,9 +119,10 @@ onmessage = ({data}) => {
   
   const inputs = data.map((item) => [item.x, item.y])
   const labels = data.map((item) => [item.kalmanDistance])
-  const initial_position = math.mean(math.concat([math.max(inputs, 0)], [math.min(inputs, 0)],0),0)
-  let x_e = initial_position[0];
-  let y_e = initial_position[1];
+  // const initial_position = math.mean(math.concat([math.max(inputs, 0)], [math.min(inputs, 0)],0),0); // start at the mean of all beacons
+  const initial_position = inputs[0]; // start at the closest beacon
+  let x_e = initial_position[0] || 0.1;
+  let y_e = initial_position[1] || 0.1;
   // let x_e = math.random(3); //2;
   // let y_e = math.random(3); //2;
   // console.log("initial estimate: ", {x_e, y_e})
