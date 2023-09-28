@@ -119,15 +119,16 @@ onmessage = ({data}) => {
   
   const inputs = data.map((item) => [item.x, item.y])
   const labels = data.map((item) => [item.kalmanDistance])
-  let x_e = 2;
-  let y_e = 2;
+  const initial_position = math.mean(math.concat(math.max(inputs, 0), math.min(inputs, 0)))
+  let x_e = initial_position[0];
+  let y_e = initial_position[1];
   // let x_e = math.random(3); //2;
   // let y_e = math.random(3); //2;
   // console.log("initial estimate: ", {x_e, y_e})
-  if (previousPredictedLocation) {
-    x_e = previousPredictedLocation.x;
-    y_e = previousPredictedLocation.y;
-  }
+  // if (previousPredictedLocation) {
+  //   x_e = previousPredictedLocation.x;
+  //   y_e = previousPredictedLocation.y;
+  // }
   let B;
   let f;
   let dx;
