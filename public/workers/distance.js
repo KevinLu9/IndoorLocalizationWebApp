@@ -11,7 +11,7 @@ if (typeof Worker == "undefined") {
 }
 
 let bluetoothDataDict = {};
-let n = 1.15416; // 2;//1.15416;
+let n = 2; // 2;//1.15416;
 let e = 2.718;
 // Bluetooth Beacon Class (locally stored for distance worker)
 class BluetoothBeacon {
@@ -29,7 +29,7 @@ class BluetoothBeacon {
     // this.flagged = [];
     this.maxBufferSize = 20;
     // this.previousCorrected = kFilter.getInitState();
-    this.kalman = new KalmanFilter(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
+    this.kalman = new KalmanFilter(0.5, 1, 0.4); //(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
   }
   addData(time, rssi) {
     // Adds new data to the beacon
@@ -91,7 +91,7 @@ const getLatestData = (currentTime) => {
     }
   }
   // Filter for only recent values (2 seconds ago)
-  res = res.filter((value) => { return new Date().getTime() - value.time < 1500 })
+  res = res.filter((value) => { return new Date().getTime() - value.time < 1000 })
   // console.log('res', res)02
   // Get 4 smallest values
   if (res.length >= 3) {

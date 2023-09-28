@@ -36,6 +36,7 @@
 
   let chartLoc;
   let locationChart;
+  let locationCount = 0;
   onMount(() => {
     const data = {
       datasets: [
@@ -105,6 +106,7 @@
       data.datasets[0].data.push($location);
       data.datasets[1].data = data.datasets[1].data;
       chartLoc?.update();
+      locationCount += 1;
     });
 
     beacons.subscribe((value) => {
@@ -242,7 +244,7 @@
   <div class="font-bold w-full text-center">
     Location Coordinatates:
     {#if $location}
-      ({$location?.x?.toFixed(2)}, {$location?.y?.toFixed(2)})
+      ({$location?.x?.toFixed(2)}, {$location?.y?.toFixed(2)}) {locationCount}
     {/if}
   </div>
   {#each Object.entries(charts) as [id, beaconChart]}
