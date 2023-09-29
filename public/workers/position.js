@@ -56,7 +56,7 @@ importScripts('kalman.js');
 //   let p_x = (C*E - B*F) / (A*E - B*D);
 //   let p_y = (A*F - C*D) / (A*E - B*D);
 //   let p_z = 0;
-  
+
 
 //   // Apply kalman filter on locations
 //   predicted_X = kFilter.predict({previousCorrected: previousCorrected_X});
@@ -87,7 +87,7 @@ const dF = (point, estimate) => {
   [x_i, y_i] = point;
   [x_e, y_e] = estimate;
   // console.log({point, estimate})
-  return [(x_i - x_e) / ((x_i - x_e)**2 + (y_i - y_e)**2)**0.5,  (y_i - y_e) / ((x_i - x_e)**2 + (y_i - y_e)**2)**0.5];
+  return [(x_i - x_e) / ((x_i - x_e) ** 2 + (y_i - y_e) ** 2) ** 0.5, (y_i - y_e) / ((x_i - x_e) ** 2 + (y_i - y_e) ** 2) ** 0.5];
 }
 
 const RMSE = (d, point, estimate) => {
@@ -98,7 +98,7 @@ const RMSE = (d, point, estimate) => {
   [x_i, y_i] = point;
   [x_e, y_e] = estimate;
   // console.log({d, point, estimate})
-  return d - ((x_i - x_e)**2 + (y_i - y_e)**2)**0.5;
+  return d - ((x_i - x_e) ** 2 + (y_i - y_e) ** 2) ** 0.5;
 }
 
 const w_new = (X, y) => {
@@ -110,24 +110,24 @@ const w_new = (X, y) => {
 }
 // kalman = new KalmanFilter(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
 let previousPredictedLocation = undefined;
-const EPOCH = 100; //50;
+const EPOCH = 20; //50;
 const learning_rate = 0.5; //0.1;
 const kalmanX = new KalmanFilter(0.5, 0.5, 0.4);
 const kalmanY = new KalmanFilter(0.5, 0.5, 0.4);
-onmessage = ({data}) => {
+onmessage = ({ data }) => {
   const inputs = data.map((item) => [item.x, item.y])
   const labels = data.map((item) => [item.kalmanDistance])
-  const initial_position = math.mean(math.concat([math.max(inputs, 0)], [math.min(inputs, 0)],0),0); // start at the mean of all beacons
+  const initial_position = math.mean(math.concat([math.max(inputs, 0)], [math.min(inputs, 0)], 0), 0); // start at the mean of all beacons
   // const initial_position = inputs[0]; // start at the closest beacon
   let x_e = initial_position[0];
   let y_e = initial_position[1];
   // let x_e = math.random(3); //2;
   // let y_e = math.random(3); //2;
   // console.log("initial estimate: ", {x_e, y_e})
-  // if (previousPredictedLocation) {
-  //   x_e = previousPredictedLocation.x;
-  //   y_e = previousPredictedLocation.y;
-  // }
+  if (previousPredictedLocation) {
+    x_e = previousPredictedLocation.x;
+    y_e = previousPredictedLocation.y;
+  }
   let B;
   let f;
   let dx;
@@ -158,9 +158,9 @@ onmessage = ({data}) => {
     error = Math.abs(math.mean(f));
     // console.log('[Iteration ', i,  ']', 'Delta: ', {dx, dy}, 'Error: ', error)
     error_arr.push(error)
-    estimates.push({x: x_e, y: y_e, error: error})
-    x_e = x_e - learning_rate*dx;
-    y_e = y_e - learning_rate*dy;
+    estimates.push({ x: x_e, y: y_e, error: error })
+    x_e = x_e - learning_rate * dx;
+    y_e = y_e - learning_rate * dy;
     // Keep track of location with smallest error
     if (error < previousError) {
       previousError = error;
@@ -184,8 +184,8 @@ onmessage = ({data}) => {
   // console.log(error_arr.toString())
   final_x = kalmanX.calculateKalman(final_x);
   final_y = kalmanY.calculateKalman(final_y);
-  previousPredictedLocation = {x: final_x, y: final_y, error: previousError};
-  postMessage({x: final_x, y: final_y, error: previousError});
+  previousPredictedLocation = { x: final_x, y: final_y, error: previousError };
+  postMessage({ x: final_x, y: final_y, error: previousError });
 };
 
 // ML using Linear Regression END --------------------------------------------------------------------------------------------------
