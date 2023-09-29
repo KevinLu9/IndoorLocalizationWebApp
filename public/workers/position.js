@@ -124,10 +124,10 @@ onmessage = ({ data }) => {
   // let x_e = math.random(3); //2;
   // let y_e = math.random(3); //2;
   // console.log("initial estimate: ", {x_e, y_e})
-  if (previousPredictedLocation) {
-    x_e = previousPredictedLocation.x;
-    y_e = previousPredictedLocation.y;
-  }
+  // if (previousPredictedLocation) {
+  //   x_e = previousPredictedLocation.x;
+  //   y_e = previousPredictedLocation.y;
+  // }
   let B;
   let f;
   let dx;
