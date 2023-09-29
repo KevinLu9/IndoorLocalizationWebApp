@@ -61,7 +61,7 @@ class BluetoothBeacon {
   }
   calculateDistance(rssi) {
     // Calculates distance using Log-Distance path loss model
-    return e ** (-(this.txPower + rssi) / (10 * n));
+    return 10 ** (-(this.txPower + rssi) / (10 * n));
   }
   runKalmanFilter = (data) => {
     // Kalman filter for the data
