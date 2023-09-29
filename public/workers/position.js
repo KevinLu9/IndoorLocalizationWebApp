@@ -119,8 +119,8 @@ onmessage = ({ data }) => {
   const labels = data.map((item) => [item.kalmanDistance])
   const initial_position = math.mean([math.max(inputs, 0), math.min(inputs, 0)], 0); // start at the mean of all beacons
   // const initial_position = inputs[0]; // start at the closest beacon
-  let x_e = initial_position[0];
-  let y_e = initial_position[1];
+  let x_e = math.mean(initial_position[0], inputs[0][0]);
+  let y_e = math.mean(initial_position[1], inputs[0][1]);
   // let x_e = math.random(3); //2;
   // let y_e = math.random(3); //2;
   // console.log("initial estimate: ", {x_e, y_e})
