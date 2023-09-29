@@ -10,6 +10,7 @@
     distanceLabels,
     distanceWorker,
     beacons,
+    printTestData,
   } from "../../store.js";
 
   // Location View Chart
@@ -258,4 +259,7 @@
       <canvas class="" id={beaconChart.id} />
     </div>
   {/each}
+</div>
+<div class="w-full flex items-center justify-center m-4">
+  <button class="btn btn-primary" on:click={printTestData}>Console Log Test Data</button>
 </div>

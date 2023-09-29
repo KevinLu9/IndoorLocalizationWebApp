@@ -114,9 +114,7 @@ const EPOCH = 100; //50;
 const learning_rate = 0.5; //0.1;
 const kalmanX = new KalmanFilter(0.5, 0.5, 0.4);
 const kalmanY = new KalmanFilter(0.5, 0.5, 0.4);
-
 onmessage = ({data}) => {
-  
   const inputs = data.map((item) => [item.x, item.y])
   const labels = data.map((item) => [item.kalmanDistance])
   const initial_position = math.mean(math.concat([math.max(inputs, 0)], [math.min(inputs, 0)],0),0); // start at the mean of all beacons
