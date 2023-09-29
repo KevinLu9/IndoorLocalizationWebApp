@@ -116,7 +116,7 @@ const kalmanX = new KalmanFilter(0.5, 0.5, 0.05);
 const kalmanY = new KalmanFilter(0.5, 0.5, 0.05);
 onmessage = ({ data }) => {
   const inputs = data.map((item) => [item.x, item.y])
-  const labels = data.map((item) => [item.kalmanDistance])
+  const labels = data.map((item, index) => { return (index > 3) ? [item.kalmanDistance * 0.5] : [item.kalmanDistance] })
   const initial_position = math.mean(math.concat([math.max(inputs, 0)], [math.min(inputs, 0)], 0), 0); // start at the mean of all beacons
   // const initial_position = inputs[0]; // start at the closest beacon
   let x_e = initial_position[0];
