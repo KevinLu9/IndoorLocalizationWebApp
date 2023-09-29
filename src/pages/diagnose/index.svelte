@@ -260,7 +260,7 @@
     </div>
   {/each}
 </div>
-<div class="w-full flex items-center justify-center m-4">
+<div class="w-full flex items-center justify-center">
   <button class="btn btn-primary" on:click={printTestData}
     >Console Log Test Data</button
   >
