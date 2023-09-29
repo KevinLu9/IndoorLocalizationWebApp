@@ -11,7 +11,7 @@ if (typeof Worker == "undefined") {
 }
 
 let bluetoothDataDict = {};
-let n = 1; // 2;//1.15416;
+let n = 2; // 2;//1.15416;
 let e = 2.718;
 // Bluetooth Beacon Class (locally stored for distance worker)
 class BluetoothBeacon {
