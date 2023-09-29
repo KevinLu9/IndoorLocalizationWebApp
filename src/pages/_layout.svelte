@@ -7,7 +7,7 @@
 
 <Navbar>
   <Bluetooth />
-  <Sensor />
+  <!-- <Sensor /> -->
 </Navbar>
 
 <slot />
