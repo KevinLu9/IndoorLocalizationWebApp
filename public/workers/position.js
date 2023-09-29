@@ -110,10 +110,10 @@ const w_new = (X, y) => {
 }
 // kalman = new KalmanFilter(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
 let previousPredictedLocation = undefined;
-const EPOCH = 20; //50;
+const EPOCH = 50; //50;
 const learning_rate = 0.5; //0.1;
-const kalmanX = new KalmanFilter(0.5, 0.5, 0.4);
-const kalmanY = new KalmanFilter(0.5, 0.5, 0.4);
+const kalmanX = new KalmanFilter(0.5, 0.5, 0.05);
+const kalmanY = new KalmanFilter(0.5, 0.5, 0.05);
 onmessage = ({ data }) => {
   const inputs = data.map((item) => [item.x, item.y])
   const labels = data.map((item) => [item.kalmanDistance])
