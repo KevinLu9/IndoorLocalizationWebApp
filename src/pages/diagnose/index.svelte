@@ -261,5 +261,7 @@
   {/each}
 </div>
 <div class="w-full flex items-center justify-center m-4">
-  <button class="btn btn-primary" on:click={printTestData}>Console Log Test Data</button>
+  <button class="btn btn-primary" on:click={printTestData}
+    >Console Log Test Data</button
+  >
 </div>
