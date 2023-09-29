@@ -93,10 +93,10 @@ const getLatestData = (currentTime) => {
   // Filter for only recent values (2 seconds ago)
   res = res.filter((value) => { return new Date().getTime() - value.time < 500 })
   // console.log('res', res)02
-  // Get 4 smallest values
+  // Have at least 3 beacons in proximity
   if (res.length >= 3) {
     res = res.sort((a, b) => a.kalmanDistance - b.kalmanDistance)
-    res = res.slice(0, 3);
+    // res = res.slice(0, 3);
     res.forEach((value) => {
       bluetoothDataDict[value.id].latestUsed = true;
     })
