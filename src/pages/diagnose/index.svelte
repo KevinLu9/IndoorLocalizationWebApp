@@ -164,6 +164,7 @@
                 type: "linear",
                 position: "left",
                 suggestedMin: 0,
+                suggestedMax: 5,
                 ticks: {
                   stepSize: 1,
                 },
