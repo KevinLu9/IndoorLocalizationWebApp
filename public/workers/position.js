@@ -117,17 +117,20 @@ const kalmanY = new KalmanFilter(0.5, 0.7, 0.05);
 onmessage = ({ data }) => {
   const inputs = data.map((item) => [item.x, item.y])
   const labels = data.map((item) => [item.kalmanDistance])
-  const min_3_inputs = inputs.slice(0, 3);
-  const initial_position = math.mean([math.max(min_3_inputs, 0), math.min(min_3_inputs, 0)], 0); // start at the mean of all beacons
-  // const initial_position = inputs[0]; // start at the closest beacon
-  let x_e = math.mean(initial_position[0], inputs[0][0]);
-  let y_e = math.mean(initial_position[1], inputs[0][1]);
+  let x_e = 0;
+  let y_e = 0;
   // let x_e = math.random(3); //2;
   // let y_e = math.random(3); //2;
   // console.log("initial estimate: ", {x_e, y_e})
   if (previousPredictedLocation) {
     x_e = previousPredictedLocation.x;
     y_e = previousPredictedLocation.y;
+  } else {
+    const min_3_inputs = inputs.slice(0, 3);
+    const initial_position = math.mean([math.max(min_3_inputs, 0), math.min(min_3_inputs, 0)], 0); // start at the mean of all beacons
+    // const initial_position = inputs[0]; // start at the closest beacon
+    x_e = math.mean(initial_position[0], inputs[0][0]);
+    y_e = math.mean(initial_position[1], inputs[0][1]);
   }
   let B;
   let f;
