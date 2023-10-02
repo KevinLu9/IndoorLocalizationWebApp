@@ -96,7 +96,7 @@ const getLatestData = (currentTime) => {
   // Have at least 3 beacons in proximity
   if (res.length >= 3) {
     res = res.sort((a, b) => a.kalmanDistance - b.kalmanDistance)
-    // res = res.slice(0, 3);
+    res = res.slice(0, 3);
     res.forEach((value) => {
       bluetoothDataDict[value.id].latestUsed = true;
     })
