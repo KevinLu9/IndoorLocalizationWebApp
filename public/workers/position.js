@@ -189,7 +189,7 @@ onmessage = ({ data }) => {
   final_x = kalmanX.calculateKalman(final_x);
   final_y = kalmanY.calculateKalman(final_y);
   previousPredictedLocation = { x: final_x, y: final_y, error: previousError };
-  postMessage({ x: final_x, y: final_y, error: previousError });
+  postMessage({ x: final_x, y: final_y, error: previousError, distanceVals: data });
 };
 
 // ML using Linear Regression END --------------------------------------------------------------------------------------------------

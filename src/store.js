@@ -18,7 +18,7 @@ export const beacons = writable([]);
 export const distanceWorker = new Worker("workers/distance.js");
 export const positionWorker = new Worker("workers/position.js");
 
-const testData = [{x:4, z:2}]; // Keep track of all points
+const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
 const timeLastCalculatedLocation = new Date().getTime()
 
@@ -27,7 +27,8 @@ export const printTestData = () => {
 }
 
 positionWorker.onmessage = (e) => {
-  console.log('[PositionWorker Result]', e.data);
+  // console.log('[PositionWorker Result]', e.data);
+  testData.push(e.data);
   updateLocation({ x: e.data.x, y: e.data.y })
 
 }
@@ -62,7 +63,6 @@ distanceWorker.onmessage = (e) => {
   // Only post if it has been at least one second since the last calculation
   if (new Date().getTime() - timeLastCalculatedLocation > 500) {
     if (e.data.distanceVals) {
-      testData.push(e.data.distanceVals);
       positionWorker.postMessage(e.data.distanceVals);
     }
   }
