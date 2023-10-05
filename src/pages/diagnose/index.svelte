@@ -11,6 +11,7 @@
     distanceWorker,
     beacons,
     printTestData,
+    runSimulation,
   } from "../../store.js";
 
   // Location View Chart
@@ -261,8 +262,11 @@
     </div>
   {/each}
 </div>
-<div class="w-full flex items-center justify-center">
-  <button class="btn btn-primary" on:click={printTestData}
-    >Console Log Test Data</button
-  >
+<div class="w-full flex items-center justify-center m-2 gap-2">
+  <button class="btn btn-primary" on:click={printTestData}>
+    Console Log Test Data
+  </button>
+  <button class="btn btn-secondary" on:click={runSimulation}>
+    Run Simulation
+  </button>
 </div>

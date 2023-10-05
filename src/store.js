@@ -69,3 +69,44 @@ distanceWorker.onmessage = (e) => {
   }
 
 }
+
+
+function createNewBeacon(id, txPower, x, y, z) {
+  distanceWorker.postMessage({
+    command: "device",
+    values: {
+      id: manufacturerID,
+      txPower: txPower,
+      x: x,
+      y: y,
+      z: z,
+    },
+  });
+}
+
+function sendDataToDistanceWorker(id, time, rssi) {
+  distanceWorker.postMessage({
+    command: "rssi",
+    values: { id, time, rssi },
+  });
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+import data from './testData5.json';
+
+export async function runSimulation() {
+  // beacons: [{id, txPower, x, y, z}, ...]
+  // data: [{id, time, rssi}, ...]
+  // beacons.forEach((beacon) => {
+  //   createNewBeacon(beacon?.id, beacon?.txPower, beacon?.x, beacon?.y, beacon?.z);
+  // })
+  
+  for(let point of data) {
+    // console.log({point});
+    for(let beacon of point) {
+      sendDataToDistanceWorker(beacon?.id, beacon?.time, beacon?.rssi);
+    }
+    await sleep(250);
+  }
+}
