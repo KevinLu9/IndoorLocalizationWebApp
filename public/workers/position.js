@@ -112,8 +112,8 @@ const w_new = (X, y) => {
 let previousPredictedLocation = undefined;
 const EPOCH = 20; //50;
 const learning_rate = 0.5; //0.1;
-const kalmanX = new KalmanFilter(0.5, 0.7, 0.05);
-const kalmanY = new KalmanFilter(0.5, 0.7, 0.05);
+const kalmanX = new KalmanFilter(0.5, 0.3, 0.2);        //(0.5, 0.5, 0.4);    //(0.5, 0.7, 0.05);
+const kalmanY = new KalmanFilter(0.5, 0.3, 0.2);        //(0.5, 0.5, 0.4);    //(0.5, 0.7, 0.05);
 onmessage = ({ data }) => {
   const inputs = data.map((item) => [item.x, item.y])
   const labels = data.map((item) => [item.kalmanDistance])
@@ -129,8 +129,10 @@ onmessage = ({ data }) => {
     const min_3_inputs = inputs.slice(0, 3);
     const initial_position = math.mean([math.max(min_3_inputs, 0), math.min(min_3_inputs, 0)], 0); // start at the mean of all beacons
     // const initial_position = inputs[0]; // start at the closest beacon
-    x_e = math.mean(initial_position[0], inputs[0][0]);
-    y_e = math.mean(initial_position[1], inputs[0][1]);
+    // x_e = math.mean(initial_position[0], inputs[0][0]);
+    // y_e = math.mean(initial_position[1], inputs[0][1]);
+    x_e = initial_position[0];
+    y_e = initial_position[1];
   }
   let B;
   let f;
@@ -186,10 +188,11 @@ onmessage = ({ data }) => {
   // console.log({x_e, y_e})
   // console.log({x: final_x, y: final_y, error: previousError})
   // console.log(error_arr.toString())
+
   final_x = kalmanX.calculateKalman(final_x);
   final_y = kalmanY.calculateKalman(final_y);
   previousPredictedLocation = { x: final_x, y: final_y, error: previousError };
-  console.log({ x: final_x, y: final_y })
+  // console.log({ x: final_x, y: final_y })
   postMessage({ x: final_x, y: final_y, error: previousError, distanceVals: data });
 };
 

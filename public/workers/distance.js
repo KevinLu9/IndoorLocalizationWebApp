@@ -21,22 +21,24 @@ class BluetoothBeacon {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.rssi = [];
     this.time = [];
+    this.rssi = [];
+    this.kalmanRSSI = [];
     this.distance = [];
     this.kalmanDistance = [];
     this.latestUsed = false;
     // this.flagged = [];
     this.maxBufferSize = 20;
     // this.previousCorrected = kFilter.getInitState();
-    this.kalman = new KalmanFilter(0.5, 0.7, 0.2); //(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
+    this.kalman = new KalmanFilter(0.6, 0.5, 0.02);  //(0.5, 0.7, 0.2); //(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
   }
   addData(time, rssi) {
     // Adds new data to the beacon
     // Keep length within maxBufferSize
     if (rssi.length >= this.maxBufferSize) {
-      this.rssi.shift();
       this.time.shift();
+      this.rssi.shift();
+      this.kalmanRSSI.shift();
       this.distance.shift();
       this.kalmanDistance.shift();
     }
@@ -46,7 +48,9 @@ class BluetoothBeacon {
     this.latestUsed = false;
     // Calculate distance with and without kalman filter based on the rssi
     const dist = this.calculateDistance(rssi);
-    const kalmanDist = this.runKalmanFilter(dist);
+    const kRSSI = this.runKalmanFilter(rssi);
+    const kalmanDist = this.calculateDistance(kRSSI);
+    this.kalmanRSSI.push(kRSSI)
     this.distance.push(dist);
     this.kalmanDistance.push(kalmanDist);
 
@@ -55,7 +59,7 @@ class BluetoothBeacon {
   getLatestData() {
     // Gets the latest data from the beacon
     if (this.rssi.length > 0 && !this.latestUsed) {
-      return { 'time': this.time[this.time.length - 1], 'rssi': this.rssi[this.rssi.length - 1], 'distance': this.distance[this.distance.length - 1], 'kalmanDistance': this.kalmanDistance[this.kalmanDistance.length - 1], x: this.x, y: this.y, z: this.z, id: this.id };
+      return { 'time': this.time[this.time.length - 1], 'rssi': this.rssi[this.rssi.length - 1], 'kalmanRSSI': this.kalmanRSSI[this.kalmanRSSI.length - 1], 'distance': this.distance[this.distance.length - 1], 'kalmanDistance': this.kalmanDistance[this.kalmanDistance.length - 1], x: this.x, y: this.y, z: this.z, id: this.id };
     }
     return null;
   }
@@ -77,7 +81,7 @@ class BluetoothBeacon {
   }
 }
 
-const getLatestData = (currentTime) => {
+const getLatestData = () => {
   let res = [];
   const keys = Object.keys(bluetoothDataDict);
   for (let key of keys) {
@@ -114,7 +118,7 @@ onmessage = ({ data }) => {
     let kalman_distance;
     const currentTime = new Date().getTime();
     [distance, kalman_distance] = bluetoothDataDict[data.values.id].addData(currentTime, data.values.rssi);
-    const distanceVals = getLatestData(currentTime);
+    const distanceVals = getLatestData();
     // console.log('[LOCATION] distanceVals: ', distanceVals)
     workerResult = { distance, kalman_distance, id: data.values.id, time: currentTime / 1000, x: bluetoothDataDict[data.values.id].x, y: bluetoothDataDict[data.values.id].y, distanceVals };
 

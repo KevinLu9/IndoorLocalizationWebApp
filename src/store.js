@@ -28,7 +28,7 @@ export const printTestData = () => {
 
 positionWorker.onmessage = (e) => {
   // console.log('[PositionWorker Result]', e.data);
-  // testData.push(e.data);
+  testData.push(e.data);
   updateLocation({ x: e.data.x, y: e.data.y })
 
 }
@@ -36,7 +36,9 @@ positionWorker.onmessage = (e) => {
 // Handle new distances from Distance Worker.
 distanceWorker.onmessage = (e) => {
   // console.log("[BLUETOOTH FROM STORE]", e.data);
-  testData.push(e.data.distanceVals);
+  // if (e.data.distanceVals) {
+  //   testData.push(e.data.distanceVals);
+  // }
   distance.update((value) => {
     if (!value[e.data.id]) {
       value[e.data.id] = [];

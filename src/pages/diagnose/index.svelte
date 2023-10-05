@@ -96,15 +96,17 @@
     };
 
     chartLoc = new Chart(locationChart, config);
+    const LOCATIONBUFFERWIDTH = 100;
     location.subscribe((value) => {
-      // console.log(chartLoc)
+      // console.log(value)
       if (!chartLoc || !data) {
         return;
       }
       data.datasets[0].data.shift();
-      data.datasets[1].data.push(
-        $previousLocations[$previousLocations.length - 1]
-      );
+      data.datasets[1].data.push(value);
+      if (data.datasets[1].data.length > LOCATIONBUFFERWIDTH) {
+        data.datasets[1].data.shift();
+      }
       data.datasets[0].data.push($location);
       data.datasets[1].data = data.datasets[1].data;
       chartLoc?.update();
