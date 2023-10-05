@@ -10,14 +10,14 @@ export const updateLocation = (loc) => {
   location.set(loc);
 };
 
-
 export const distance = writable({});
 export const kalmanDistance = writable({});
 export const distanceLabels = writable({});
 export const beacons = writable([]);
 export const distanceWorker = new Worker("workers/distance.js");
 export const positionWorker = new Worker("workers/position.js");
-
+export const globalLoadingMessage = writable("");
+export const isGlobalLoading  = writable(true);
 const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
 const timeLastCalculatedLocation = new Date().getTime()

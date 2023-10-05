@@ -14,7 +14,7 @@
   import { url } from "@roxi/routify";
   import { distanceWorker, positionWorker } from "../store";
   import { api } from "../api";
-  import { beacons } from "../store";
+  import { beacons, isGlobalLoading, globalLoadingMessage } from "../store";
 
   let clipboardClicked = false;
   let hasExperimentalFlagEnabled = null;
@@ -206,10 +206,17 @@
       this.txPower = txPower;
     }
   }
-  onMount(() => {
+
+  const fetchBeacons = () => {
     // get bluetooth beacons from api
+    
     api.get_beacon().then((res) => {
       // console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
+      // Retry setting error
+      if (res?.error) {
+        globalLoadingMessage.set("Fetching Beacons Failed, Retrying...");
+        fetchBeacons();
+      }
       res?.data?.forEach((beacon) => {
         bluetoothDataDict[beacon.id] = new BluetoothBeacon(
           beacon.id,
@@ -233,7 +240,14 @@
           },
         });
       });
+      isGlobalLoading.set(false);
     });
+  }
+
+  onMount(() => {
+    isGlobalLoading.set(true);
+    globalLoadingMessage.set("Interfacing With Beacons");
+    fetchBeacons();
   });
 
   const getCurrentTime = (ms_time) => {
