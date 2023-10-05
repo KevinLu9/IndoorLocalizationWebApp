@@ -200,4 +200,27 @@ paths:
       responses:
         "204":
           description: "Successfully updated a beacon's content"
+  
+  /login:
+    get:
+      operationId: "auth.verify_password"
+      tags: ["Auth"]
+      summary: "Authentication using username/password OR token"
+      parameters:
+        - name: username_or_token
+          in: path
+          description: username or token to be used for authentication
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: path
+          description: password to be used for authentication, can be left blank if using token
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Successfully authenticated"
+
       

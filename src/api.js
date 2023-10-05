@@ -4,6 +4,7 @@ export const api = {};
 
 api.URL = "https://kevin902.pythonanywhere.com/api/";
 // api.URL = "https://16.50.180.11:8000/api/";
+// api.URL = "https://192.168.1.111:8000/api/";
 api.get_beacon = async function get_beacon() {
   const api_url = `${api.URL}beacon`;
   let error = undefined;
@@ -127,6 +128,20 @@ api.create_location = async function create_location(id, rssi, x, y) {
   let error = undefined;
   let data = undefined;
   await axios.post(api_url, {id, rssi, x, y})
+  .then((res) => {
+    data = res.data;
+  })
+  .catch((err) => {
+    error = err;
+  })
+  return {error, data}
+}
+
+api.login = async function login(username_or_token, password) {
+  const api_url = `${api.URL}login`;
+  let error = undefined;
+  let data = undefined;
+  await axios.get({username_or_token, password})
   .then((res) => {
     data = res.data;
   })

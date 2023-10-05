@@ -7,6 +7,7 @@
     ChevronUp,
     ChevronDoubleLeft,
   } from "heroicons-for-svelte/icons/outline";
+  import { api } from "../api";
   let isNavBarVisible = false;
   let isDiagnoseVisible = true;
   const links = [
@@ -16,6 +17,12 @@
     ["/setup", "Setup"]
   ];
   let drawerVal = false;
+
+  const login = () => {
+    api.login('admin', 'beansarecool').then((res) => {
+      console.log('login: ', {res});
+    })
+  }
 </script>
 
 <div class="drawer">
@@ -57,8 +64,10 @@
           class="h-8 mr-3"
           alt="Flowbite Logo"
         />
-        <div class="flex-1 px-2 mx-2 font-bold text-white">Indoor Localisation</div>
+        <div class="flex-1 px-2 mx-2 font-bold text-white whitespace-nowrap">Indoor Localisation</div>
       </a>
+      <div class="w-full flex items-center justify-end"></div>
+      <button class="btn btn-outline btn-sm" on:click={login}>Login</button>
     </div>
     <!-- Page content here -->
   </div>
