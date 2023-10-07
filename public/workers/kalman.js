@@ -9,12 +9,17 @@ class KalmanFilter {
         this.meas_uncertainty = meas_uncertainty;
         this.est_uncertainty = est_uncertainty;
         this.q = q;
-        this.prev_est = 0;
+        this.prev_est = undefined;
         this.cur_est = 0;
         this.kalman_gain = 0;
     }
     calculateKalman(meas) {
         // meas: is the new value.
+        if (this.prev_est == undefined) {
+            this.prev_est = meas;
+            this.cur_est = meas;
+            return this.cur_est;
+        }
         // Kalman steps
         this.kal_gain = this.est_uncertainty / (this.est_uncertainty + this.meas_uncertainty); // compute kalman gain
         // console.log('kalman gain: ', this.kal_gain);
