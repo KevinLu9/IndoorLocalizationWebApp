@@ -17,7 +17,7 @@ export const beacons = writable([]);
 export const distanceWorker = new Worker("workers/distance.js");
 export const positionWorker = new Worker("workers/position.js");
 export const globalLoadingMessage = writable("");
-export const isGlobalLoading  = writable(true);
+export const isGlobalLoading = writable(true);
 const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
 const timeLastCalculatedLocation = new Date().getTime()
@@ -64,7 +64,7 @@ distanceWorker.onmessage = (e) => {
   })
 
   // Only post if it has been at least one second since the last calculation
-  if (new Date().getTime() - timeLastCalculatedLocation > 500) {
+  if (new Date().getTime() - timeLastCalculatedLocation > 1000) {
     if (e.data.distanceVals) {
       positionWorker.postMessage(e.data.distanceVals);
     }
@@ -103,10 +103,10 @@ export async function runSimulation() {
   // beacons.forEach((beacon) => {
   //   createNewBeacon(beacon?.id, beacon?.txPower, beacon?.x, beacon?.y, beacon?.z);
   // })
-  
-  for(let point of data) {
+
+  for (let point of data) {
     // console.log({point});
-    for(let beacon of point) {
+    for (let beacon of point) {
       sendDataToDistanceWorker(beacon?.id, beacon?.time, beacon?.rssi);
     }
     await sleep(250);
