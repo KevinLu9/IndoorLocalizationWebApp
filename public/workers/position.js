@@ -122,18 +122,18 @@ onmessage = ({ data }) => {
   // let x_e = math.random(3); //2;
   // let y_e = math.random(3); //2;
   // console.log("initial estimate: ", {x_e, y_e})
-  if (previousPredictedLocation) {
-    x_e = previousPredictedLocation.x;
-    y_e = previousPredictedLocation.y;
-  } else {
-    const min_3_inputs = inputs.slice(0, 3);
-    const initial_position = math.mean([math.max(min_3_inputs, 0), math.min(min_3_inputs, 0)], 0); // start at the mean of all beacons
-    // const initial_position = inputs[0]; // start at the closest beacon
-    // x_e = math.mean(initial_position[0], inputs[0][0]);
-    // y_e = math.mean(initial_position[1], inputs[0][1]);
-    x_e = initial_position[0];
-    y_e = initial_position[1];
-  }
+  // if (previousPredictedLocation) {
+  //   x_e = previousPredictedLocation.x;
+  //   y_e = previousPredictedLocation.y;
+  // } else {
+  const min_3_inputs = inputs.slice(0, 3);
+  const initial_position = math.mean([math.max(min_3_inputs, 0), math.min(min_3_inputs, 0)], 0); // start at the mean of all beacons
+  // const initial_position = inputs[0]; // start at the closest beacon
+  // x_e = math.mean(initial_position[0], inputs[0][0]);
+  // y_e = math.mean(initial_position[1], inputs[0][1]);
+  x_e = initial_position[0];
+  y_e = initial_position[1];
+  // }
   let B;
   let f;
   let dx;
