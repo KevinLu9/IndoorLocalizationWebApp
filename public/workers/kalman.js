@@ -1,5 +1,5 @@
 class KalmanFilter {
-    constructor(meas_uncertainty, est_uncertainty, q) {
+    constructor(meas_uncertainty, est_uncertainty, q, cur_est = 0) {
         /**
          * Represents a Bluetooth Beacon and its properties
          * @param {*} meas_uncertainty : measurement uncertainty
@@ -10,7 +10,7 @@ class KalmanFilter {
         this.est_uncertainty = est_uncertainty;
         this.q = q;
         this.prev_est = undefined;
-        this.cur_est = 0;
+        this.cur_est = cur_est;
         this.kalman_gain = 0;
     }
     calculateKalman(meas) {
