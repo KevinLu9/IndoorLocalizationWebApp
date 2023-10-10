@@ -2,6 +2,7 @@
     import { metatags, url } from '@roxi/routify'
     import { kalmanDistance, beacons } from '../store';
     import { api } from '../api';
+    import { onMount } from 'svelte';
     metatags.title = 'Indoor Localisation'
     metatags.description = 'Description coming soon...'
 
@@ -44,14 +45,19 @@
                 console.log({beaconContent})
             }
         }
-        // console.log(beaconToShow)
+        console.log(beaconToShow)
         
     }
+
+    // onMount(() => {
+    //     beaconToShow = {id:'01'}
+    //     getBeaconContent(beaconToShow?.id)
+    // })
     
 </script>
 
 
-<h1 bind:this={topDiv} class="font-bold text-center text-2xl my-2">Projects Nearby</h1>
+<h1 bind:this={topDiv} class="font-bold text-center text-2xl my-2">Advertisements</h1>
 {#if isLoading}
     <div class="flex flex-col items-center justify-center w-full my-4">
         <span class="loading loading-spinner loading-lg mb-2"></span>
@@ -71,6 +77,6 @@
     </div>
 {:else}
     <div class="m-4 p-4 bg-200-600 rounded-lg border border-black no-tailwindcss-base">
-        <h3 class="text-center text-red-600">There are no nearby displays!</h3>
+        <h3 class="text-center text-red-600">There are no nearby advertisements!</h3>
     </div>
 {/if}
