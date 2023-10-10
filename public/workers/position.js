@@ -111,7 +111,7 @@ const w_new = (X, y) => {
 // kalman = new KalmanFilter(0.5, 0.7, 0.4); // 0.5, 0.5, 0.05
 let previousPredictedLocation = undefined;
 const EPOCH = 20; //50;
-const learning_rate = 0.5; //0.1;
+const learning_rate = 0.1; //0.1;
 let kalmanX = undefined;
 let kalmanY = undefined
 onmessage = ({ data }) => {
@@ -131,8 +131,8 @@ onmessage = ({ data }) => {
   let y_e = initial_position[1];
   // If kalman filters have not been initialised, set initial location to be mean of all beacons
   if (!kalmanX || !kalmanY) {
-    kalmanX = new KalmanFilter(0.5, 0.3, 0.2, initial_position[0]);        //(0.5, 0.5, 0.4);    //(0.5, 0.7, 0.05);
-    kalmanY = new KalmanFilter(0.5, 0.3, 0.2, initial_position[1]);        //(0.5, 0.5, 0.4);    //(0.5, 0.7, 0.05);
+    kalmanX = new KalmanFilter(0.5, 0.3, 0.2, initial_position[0]);      //(0.5, 0.5, 0.4);    //(0.5, 0.7, 0.05);
+    kalmanY = new KalmanFilter(0.5, 0.3, 0.2, initial_position[1]);      //(0.5, 0.5, 0.4);    //(0.5, 0.7, 0.05);
   }
   // }
   let B;
