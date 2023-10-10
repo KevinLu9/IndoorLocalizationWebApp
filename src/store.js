@@ -22,10 +22,6 @@ const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
 const timeLastCalculatedLocation = new Date().getTime()
 
-export const printTestData = () => {
-  console.log("Test Data: ", JSON.stringify(testData));
-}
-
 positionWorker.onmessage = (e) => {
   // console.log('[PositionWorker Result]', e.data);
   testData.push(e.data);
@@ -73,6 +69,34 @@ distanceWorker.onmessage = (e) => {
 }
 
 
+// Setting user's ID to keep track of their device (randomly generated not linked to the device in anyway).
+if (!localStorage.getItem("ID")) {
+  function generateUUID() { // Public Domain/MIT
+    var d = new Date().getTime();//Timestamp
+    var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16;//random number between 0 and 16
+        if(d > 0){//Use timestamp until depleted
+            r = (d + r)%16 | 0;
+            d = Math.floor(d/16);
+        } else {//Use microseconds since page-load if supported
+            r = (d2 + r)%16 | 0;
+            d2 = Math.floor(d2/16);
+        }
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+}
+// Put ID into localStorage
+  localStorage.setItem("ID", generateUUID())
+}
+
+
+
+// Testing/Simulation Functions
+export const printTestData = () => {
+  console.log("Test Data: ", JSON.stringify(testData));
+}
+
 function createNewBeacon(id, txPower, x, y, z) {
   distanceWorker.postMessage({
     command: "device",
@@ -92,7 +116,6 @@ function sendDataToDistanceWorker(id, time, rssi) {
     values: { id, time, rssi },
   });
 }
-
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // import data from './testData5.json';
