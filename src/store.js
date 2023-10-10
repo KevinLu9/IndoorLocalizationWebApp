@@ -95,18 +95,24 @@ function sendDataToDistanceWorker(id, time, rssi) {
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-import data from './testData5.json';
-
+// import data from './testData5.json';
+export const testString = writable("");
+let dataString = "";
+testString.subscribe((value) => {
+  dataString = value;
+})
 export async function runSimulation() {
   // beacons: [{id, txPower, x, y, z}, ...]
   // data: [{id, time, rssi}, ...]
   // beacons.forEach((beacon) => {
   //   createNewBeacon(beacon?.id, beacon?.txPower, beacon?.x, beacon?.y, beacon?.z);
   // })
+  const data = JSON.parse(dataString);
+  console.log({ data })
 
   for (let point of data) {
     // console.log({point});
-    for (let beacon of point) {
+    for (let beacon of point['distanceVals']) {
       sendDataToDistanceWorker(beacon?.id, beacon?.time, beacon?.rssi);
     }
     await sleep(250);

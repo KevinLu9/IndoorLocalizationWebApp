@@ -12,6 +12,7 @@
     beacons,
     printTestData,
     runSimulation,
+    testString,
   } from "../../store.js";
 
   // Location View Chart
@@ -264,11 +265,16 @@
     </div>
   {/each}
 </div>
-<div class="w-full flex items-center justify-center m-2 gap-2">
+<p class="p-2 text-center font-bold text-lg">Simulation Testing</p>
+<div class="w-full flex items-center justify-center p-2 gap-2">
   <button class="btn btn-primary" on:click={printTestData}>
     Console Log Test Data
   </button>
   <button class="btn btn-secondary" on:click={runSimulation}>
     Run Simulation
   </button>
+</div>
+<div class="p-2">
+  <p class="text-center font-bold text-md">Data String</p>
+  <textarea class="w-full h-20 rounded-md p-1" bind:value={$testString} />
 </div>
