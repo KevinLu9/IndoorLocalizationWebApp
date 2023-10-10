@@ -91,9 +91,9 @@
     <p class="font-bold text-center text-xl">Setup Bluetooth Beacons</p>
     
   </div>
-  <div class="tabs tabs-boxed justify-center">
-    <div class="tab tab-lg tab-lifted {selectedTab == 'Beacons' ? 'tab-active' : ''}" on:click={() => {selectedTab="Beacons"}}>Beacons</div> 
-    <div class="tab tab-lg tab-lifted {selectedTab == 'Content' ? 'tab-active' : ''}" on:click={() => {selectedTab="Content"}}>Content</div> 
+  <div class="w-full flex justify-center items-center p-2">
+    <div class="btn btn-outline rounded-none {selectedTab == 'Beacons' ? ' bg-green-700 text-white' : ''}" on:click={() => {selectedTab="Beacons"}}>Beacons</div> 
+    <div class="btn btn-outline rounded-none {selectedTab == 'Content' ? 'bg-green-700 text-white' : ''}" on:click={() => {selectedTab="Content"}}>Content</div> 
   </div>
   {#if selectedTab == 'Beacons'}
   <p class="text-center">Beacons with coordinates (0, 0, 0) will be ignored! The App should also be reloaded after changing these values.</p>
