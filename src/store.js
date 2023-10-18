@@ -20,7 +20,7 @@ export const globalLoadingMessage = writable("");
 export const isGlobalLoading = writable(true);
 const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
-const timeLastCalculatedLocation = new Date().getTime()
+let timeLastCalculatedLocation = new Date().getTime()
 
 positionWorker.onmessage = (e) => {
   // console.log('[PositionWorker Result]', e.data);
@@ -60,11 +60,14 @@ distanceWorker.onmessage = (e) => {
   })
 
   // Only post if it has been at least one second since the last calculation
-  if (new Date().getTime() - timeLastCalculatedLocation > 1000) {
-    if (e.data.distanceVals) {
-      positionWorker.postMessage(e.data.distanceVals);
-    }
+  if (e.data.distanceVals) {
+    positionWorker.postMessage(e.data.distanceVals);
   }
+  // if (new Date().getTime() - timeLastCalculatedLocation > 250) {
+  //   if (e.data.distanceVals) {
+  //     positionWorker.postMessage(e.data.distanceVals);
+  //   }
+  // }
 
 }
 
