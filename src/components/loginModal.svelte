@@ -56,7 +56,6 @@
 
 {#if name}
   <button class="btn btn-outline btn-sm" on:click={logout}>
-    {name}
     <Icon icon={Logout} class="scale-150 ml-2 w-16 h-16 text-green-500 flex-shrink-0" />
   </button>
 {:else}
@@ -71,6 +70,7 @@
     <div class="w-full flex flex-col gap-2">
       <input 
         class="input input-bordered w-full bg-base-300 {isUsernameError ? 'border-error': ''}"
+        type="text"
         on:change={() => {isUsernameError = false}} placeholder="Username" 
         bind:value={username}
       />

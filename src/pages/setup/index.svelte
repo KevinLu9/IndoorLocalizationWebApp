@@ -109,8 +109,6 @@
     <div class="btn btn-outline rounded-none {selectedTab == 'Beacons' ? ' bg-green-700 text-white' : ''}" on:click={() => {selectedTab="Beacons"}}>Beacons</div> 
     <div class="btn btn-outline rounded-none {selectedTab == 'Content' ? 'bg-green-700 text-white' : ''}" on:click={() => {selectedTab="Content"}}>Content</div> 
   </div>
-  {#if selectedTab == 'Beacons'}
-  <p class="text-center">Beacons with coordinates (0, 0, 0) will be ignored! The App should also be reloaded after changing these values.</p>
   <div class="w-full flex flex-col items-center justify-center p-4">
     {#if isLoading}
       <span class="loading loading-spinner loading-lg mb-2"></span>
@@ -125,7 +123,11 @@
       <p class="text-black">Failed to Updated Beacon with ID: {currentBeacon.id}</p>
     </div>
     {/if}
-    
+  </div>
+  
+  {#if selectedTab == 'Beacons'}
+  <p class="text-center">Beacons with coordinates (0, 0, 0) will be ignored! The App should also be reloaded after changing these values.</p>
+  <div class="w-full flex flex-col items-center justify-center p-4">
     <ul class="w-full">
       {#each ble_beacons as beacon}
         <li class="text-center bg-gray-200 dark:bg-gray-600 p-2 rounded-lg border border-black dark:border-white mb-4">
