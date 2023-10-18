@@ -17,14 +17,10 @@ export const beacons = writable([]);
 export const distanceWorker = new Worker("workers/distance.js");
 export const positionWorker = new Worker("workers/position.js");
 export const globalLoadingMessage = writable("");
-export const isGlobalLoading  = writable(true);
+export const isGlobalLoading = writable(true);
 const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
-const timeLastCalculatedLocation = new Date().getTime()
-
-export const printTestData = () => {
-  console.log("Test Data: ", JSON.stringify(testData));
-}
+let timeLastCalculatedLocation = new Date().getTime()
 
 positionWorker.onmessage = (e) => {
   // console.log('[PositionWorker Result]', e.data);
@@ -64,14 +60,45 @@ distanceWorker.onmessage = (e) => {
   })
 
   // Only post if it has been at least one second since the last calculation
-  if (new Date().getTime() - timeLastCalculatedLocation > 500) {
-    if (e.data.distanceVals) {
-      positionWorker.postMessage(e.data.distanceVals);
-    }
+  if (e.data.distanceVals) {
+    positionWorker.postMessage(e.data.distanceVals);
   }
+  // if (new Date().getTime() - timeLastCalculatedLocation > 250) {
+  //   if (e.data.distanceVals) {
+  //     positionWorker.postMessage(e.data.distanceVals);
+  //   }
+  // }
 
 }
 
+
+// Setting user's ID to keep track of their device (randomly generated not linked to the device in anyway).
+if (!localStorage.getItem("ID")) {
+  function generateUUID() { // Public Domain/MIT
+    var d = new Date().getTime();//Timestamp
+    var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16;//random number between 0 and 16
+        if(d > 0){//Use timestamp until depleted
+            r = (d + r)%16 | 0;
+            d = Math.floor(d/16);
+        } else {//Use microseconds since page-load if supported
+            r = (d2 + r)%16 | 0;
+            d2 = Math.floor(d2/16);
+        }
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+}
+// Put ID into localStorage
+  localStorage.setItem("ID", generateUUID())
+}
+
+
+
+// Testing/Simulation Functions
+export const printTestData = () => {
+  console.log("Test Data: ", JSON.stringify(testData));
+}
 
 function createNewBeacon(id, txPower, x, y, z) {
   distanceWorker.postMessage({
@@ -92,21 +119,26 @@ function sendDataToDistanceWorker(id, time, rssi) {
     values: { id, time, rssi },
   });
 }
-
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-import data from './testData5.json';
-
+// import data from './testData5.json';
+export const testString = writable("");
+let dataString = "";
+testString.subscribe((value) => {
+  dataString = value;
+})
 export async function runSimulation() {
   // beacons: [{id, txPower, x, y, z}, ...]
   // data: [{id, time, rssi}, ...]
   // beacons.forEach((beacon) => {
   //   createNewBeacon(beacon?.id, beacon?.txPower, beacon?.x, beacon?.y, beacon?.z);
   // })
-  
-  for(let point of data) {
+  const data = JSON.parse(dataString);
+  console.log({ data })
+
+  for (let point of data) {
     // console.log({point});
-    for(let beacon of point) {
+    for (let beacon of point['distanceVals']) {
       sendDataToDistanceWorker(beacon?.id, beacon?.time, beacon?.rssi);
     }
     await sleep(250);

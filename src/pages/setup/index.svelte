@@ -14,6 +14,7 @@
   let beaconContent = {};
   let isContentLoading = false;
   let isContentError = false;
+  let selectedTab = "Beacons"
 
   const getBeaconContent = (beacon) => {
   isContentLoading = true;
@@ -82,29 +83,34 @@
       }, "4000");
     })
   } 
-
+  
 </script>
 
 <template>
   <div class="p-4" tabindex=0 bind:this={topDiv}>
     <p class="font-bold text-center text-xl">Setup Bluetooth Beacons</p>
-    <p class="text-center">Beacons with coordinates (0, 0, 0) will be ignored! The App should also be reloaded after changing these values.</p>
+    
   </div>
-  
+  <div class="w-full flex justify-center items-center p-2">
+    <div class="btn btn-outline rounded-none {selectedTab == 'Beacons' ? ' bg-green-700 text-white' : ''}" on:click={() => {selectedTab="Beacons"}}>Beacons</div> 
+    <div class="btn btn-outline rounded-none {selectedTab == 'Content' ? 'bg-green-700 text-white' : ''}" on:click={() => {selectedTab="Content"}}>Content</div> 
+  </div>
+  {#if selectedTab == 'Beacons'}
+  <p class="text-center">Beacons with coordinates (0, 0, 0) will be ignored! The App should also be reloaded after changing these values.</p>
   <div class="w-full flex flex-col items-center justify-center p-4">
-      {#if isLoading}
-        <span class="loading loading-spinner loading-lg mb-2"></span>
-      {:else if isSuccess}
-        <div class="w-full bg-success border border-black dark:border-white m-4 p-2 text-center rounded-lg">
-          <p class="text-black font-bold">Success!</p>
-          <p class="text-black">Successfully Updated Beacon with ID: {currentBeacon.id}</p>
-        </div>
-      {:else if isError}
-      <div class="w-full bg-error border border-black dark:border-white m-4 p-2 text-center rounded-lg">
-        <p class="text-black font-bold">Error!</p>
-        <p class="text-black">Failed to Updated Beacon with ID: {currentBeacon.id}</p>
+    {#if isLoading}
+      <span class="loading loading-spinner loading-lg mb-2"></span>
+    {:else if isSuccess}
+      <div class="w-full bg-success border border-black dark:border-white m-4 p-2 text-center rounded-lg">
+        <p class="text-black font-bold">Success!</p>
+        <p class="text-black">Successfully Updated Beacon with ID: {currentBeacon.id}</p>
       </div>
-      {/if}
+    {:else if isError}
+    <div class="w-full bg-error border border-black dark:border-white m-4 p-2 text-center rounded-lg">
+      <p class="text-black font-bold">Error!</p>
+      <p class="text-black">Failed to Updated Beacon with ID: {currentBeacon.id}</p>
+    </div>
+    {/if}
     
     <ul class="w-full">
       {#each ble_beacons as beacon}
@@ -135,8 +141,11 @@
         </li>
       {/each}
     </ul>
+    
+  </div>
+  {:else if selectedTab == 'Content'}
     <div class="w-full h-full px-4">
-      <h1 class="font-bold text-2xl text-center my-2">Display Editor</h1>
+      <h1 class="font-bold text-2xl text-center my-2">Content Editor</h1>
       <h2 class="text-center mb-2">Change the content associated with each beacon.</h2>
       <div class="w-full flex justify-center mb-2">
         <select class="select select-warning max-w-xs w-full" bind:value={selectedBeaconForContentSave} on:change={() => { getBeaconContent(selectedBeaconForContentSave)}}>
@@ -170,7 +179,7 @@
 
         <div class="flex flex-col w-full items-center justify-center">
           <div class="divider" />
-          
+
           <p class="font-bold">HTML String</p>
           <div class="overflow-auto w-full h-full">
             <textarea bind:value={customHTML} class="w-full rounded-lg border border-black p-2" rows="15" />
@@ -185,6 +194,5 @@
         </div>
       {/if}
     </div>
-  </div>
-  
+  {/if}
 </template>

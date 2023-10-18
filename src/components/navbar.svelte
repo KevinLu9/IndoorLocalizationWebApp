@@ -71,7 +71,7 @@
     </div>
     <!-- Page content here -->
   </div>
-  <div class="drawer-side">
+  <div class="drawer-side  z-[99]">
     <label for="my-drawer" class="drawer-overlay" />
     <div class="flex flex-col h-full bg-gray-200 dark:bg-gray-900">
       <div class="bg-gray-200 dark:bg-gray-900">
