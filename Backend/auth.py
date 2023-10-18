@@ -25,22 +25,27 @@ from werkzeug.security import generate_password_hash, check_password_hash
 #     return (jsonify({'username': user.username}), 201)
 
 
-@auth.verify_password
-def verify_password(username_or_token, password):
+# @auth.verify_password
+def login(username_or_token, password=""):
+  if verify_password(username_or_token, password):
+    return get_token()
+  else:
+    return abort(401, description="Invalid username or password")
+     
+def verify_password(username_or_token, password=""):
     # first try token
-    print(f"username_or_token: {username_or_token}, password: {password}")
     user = User.verify_auth_token(username_or_token)
     # then check for username and password pair
     if not user:
       user = User.query.filter_by(username = username_or_token).first()
       if not user or not user.verify_password(password):
         return False
-      g.user = user
+    g.user = user
+    
     return True
 
-@app.route('/api/login')
-@auth.login_required
+# @app.route('/api/login')
+# @auth.login_required
 def get_token():
-    token = g.user.generate_auth_token(600)
-    print(f"token: {token}")
-    return jsonify({ "token": token, "duration": 600 })
+    token = g.user.generate_auth_token(604800) # 1 week
+    return jsonify({ "token": token, "duration": 604800, "name": g.user.username })

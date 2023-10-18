@@ -1,7 +1,8 @@
 from datetime import datetime
-from flask import abort
+from flask import abort, g
 from config import db
 from models import Device, DeviceSchema
+from auth import verify_password
 
 
 def get_timestamp():
@@ -14,6 +15,9 @@ def read():
 
 
 def create(request):
+    if not verify_password(request.get("token")):
+        abort(401, f"Unauthorized access.")
+    
     id = request.get("id")
     name = request.get("name")
     txPower = request.get("txPower")

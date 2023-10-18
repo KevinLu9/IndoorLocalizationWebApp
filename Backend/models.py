@@ -18,7 +18,7 @@ class User(db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
     
-    def generate_auth_token(self, expires_in = 600):
+    def generate_auth_token(self, expires_in = 604800):
         return jwt.encode(
             { 'id': self.id, 'exp': time.time() + expires_in }, 
             app.config['SECRET_KEY'], algorithm='HS256')
@@ -27,9 +27,10 @@ class User(db.Model):
     def verify_auth_token(token):
         try:
             data = jwt.decode(token, app.config['SECRET_KEY'],
-            algorithm=['HS256'])
+            algorithms=['HS256'])
         except:
             return 
+        
         return User.query.get(data['id'])
 
 class UserSchema(ma.SQLAlchemyAutoSchema):

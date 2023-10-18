@@ -1,7 +1,8 @@
 from datetime import datetime
-from flask import abort
+from flask import abort, g
 from config import db
 from models import Beacon, BeaconSchema, Content, ContentSchema
+from auth import verify_password
 
 
 def get_timestamp():
@@ -14,6 +15,8 @@ def read():
 
 
 def create(request):
+    if not verify_password(request.get("token")):
+        abort(401, f"Unauthorized access.")
     id = request.get("id")
     # name = request.get("name")
     # txPower = request.get("txPower")
@@ -28,6 +31,8 @@ def create(request):
         abort(406, f"Beacon with id: {id} already exists.")
 
 def update(request):
+    if not verify_password(request.get("token")):
+        abort(401, f"Unauthorized access.")
     id = request.get("id")
     x = request.get("x")
     y = request.get("y")

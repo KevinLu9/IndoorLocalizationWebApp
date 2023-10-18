@@ -19,6 +19,8 @@ components:
           type: "string"
         txPower:
           type: "integer"
+        token:
+          type: "string"
     Beacons:
       type: "object"
       required: ["id"]
@@ -36,6 +38,8 @@ components:
         z:
           type: "number"
         content:
+          type: "string"
+        token:
           type: "string"
     Locations:
       type: "object"
@@ -64,6 +68,8 @@ components:
         id:
           type: "string"
         content:
+          type: "string"
+        token:
           type: "string"
     ContentSearch:
       type: "object"
@@ -203,20 +209,20 @@ paths:
   
   /login:
     get:
-      operationId: "auth.verify_password"
+      operationId: "auth.login"
       tags: ["Auth"]
       summary: "Authentication using username/password OR token"
       parameters:
         - name: username_or_token
-          in: path
+          in: query
           description: username or token to be used for authentication
           required: true
           schema:
             type: string
         - name: password
-          in: path
+          in: query
           description: password to be used for authentication, can be left blank if using token
-          required: true
+          required: false
           schema:
             type: string
       responses:

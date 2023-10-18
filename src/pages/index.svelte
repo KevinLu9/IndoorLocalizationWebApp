@@ -3,6 +3,7 @@
     import { kalmanDistance, beacons } from '../store';
     import { api } from '../api';
     import { onMount } from 'svelte';
+    
     metatags.title = 'Indoor Localisation'
     metatags.description = 'Description coming soon...'
 
@@ -53,12 +54,11 @@
     //     beaconToShow = {id:'01'}
     //     getBeaconContent(beaconToShow?.id)
     // })
-    
+    let isLoginModalVisible = true;
 </script>
 
 
 <h1 bind:this={topDiv} class="font-bold text-center text-2xl my-2">Advertisements</h1>
-
 {#if beaconToShow}
     <p class="text-center">
         ID: {beaconToShow.id}

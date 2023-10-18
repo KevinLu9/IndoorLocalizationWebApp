@@ -1,7 +1,8 @@
 from datetime import datetime
-from flask import abort
+from flask import abort, g
 from config import db
 from models import Content, ContentSchema
+from auth import verify_password
 
 
 def get_timestamp():
@@ -13,6 +14,9 @@ def read(id):
     return ContentSchema(many=True).dump(content)
 
 def update(request):
+    if not verify_password(request.get("token")):
+        abort(401, f"Unauthorized access.")
+        
     id = request.get("id")
     content = request.get("content")
     content_edit = Content.query.filter(Content.id == id).one_or_none()

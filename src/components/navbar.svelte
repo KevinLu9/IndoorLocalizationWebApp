@@ -7,22 +7,40 @@
     ChevronUp,
     ChevronDoubleLeft,
   } from "heroicons-for-svelte/icons/outline";
-  import { api } from "../api";
+  import LoginModal from "./loginModal.svelte";
+  import { isLoggedIn } from "../store"; 
+  import { get } from "svelte/store";
+
   let isNavBarVisible = false;
   let isDiagnoseVisible = true;
-  const links = [
-    ["/", "Home"],
-    ["/about", "About"],
-    ["/diagnose", "Diagnose"],
-    ["/setup", "Setup"]
-  ];
-  let drawerVal = false;
+  let links = [];
 
-  const login = () => {
-    api.login('admin', 'beansarecool').then((res) => {
-      console.log('login: ', {res});
-    })
+  let loggedIn = get(isLoggedIn);
+  isLoggedIn.subscribe((val) => {
+    loggedIn = val;
+  })
+
+  $: {
+    if (loggedIn) {
+      links = [
+        ["/", "Home"],
+        ["/about", "About"],
+        ["/diagnose", "Diagnose"],
+        ["/setup", "Setup"]
+      ];
+    } else {
+      links = [
+        ["/", "Home"],
+        ["/about", "About"],
+        ["/diagnose", "Diagnose"],
+      ];
+    }
   }
+  
+  
+  let drawerVal = false;
+  let isLoginModalVisible = false;
+
 </script>
 
 <div class="drawer">
@@ -67,7 +85,8 @@
         <div class="flex-1 px-2 mx-2 font-bold text-white whitespace-nowrap">Indoor Localisation</div>
       </a>
       <div class="w-full flex items-center justify-end"></div>
-      <button class="btn btn-outline btn-sm" on:click={login}>Login</button>
+      <!-- <button class="btn btn-outline btn-sm" on:click={() => {isLoginModalVisible = !isLoginModalVisible}}>Login</button> -->
+      <LoginModal />
     </div>
     <!-- Page content here -->
   </div>
@@ -131,6 +150,7 @@
               {/if}
             </li>
           {/each}
+
         </ul>
         <div class="divider m-0 p-0 bg-gray-200 dark:bg-gray-900"/>
         <div
@@ -147,7 +167,6 @@
                 <Icon icon={ChevronUp} class="scale-150 mr-2" />
               {/if}
             </div>
-            
             <p>Settings</p>
           </div>
         </div>
@@ -159,3 +178,4 @@
     </div>
   </div>
 </div>
+

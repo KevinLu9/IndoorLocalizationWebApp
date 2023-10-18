@@ -18,6 +18,8 @@ export const distanceWorker = new Worker("workers/distance.js");
 export const positionWorker = new Worker("workers/position.js");
 export const globalLoadingMessage = writable("");
 export const isGlobalLoading = writable(true);
+export const isLoggedIn = writable(false);
+
 const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
 let timeLastCalculatedLocation = new Date().getTime()

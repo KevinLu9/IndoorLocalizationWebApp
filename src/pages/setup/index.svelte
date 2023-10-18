@@ -2,6 +2,20 @@
   import { api } from "../../api.js";
   import { beacons } from "../../store.js";
   import Editor from '@tinymce/tinymce-svelte';
+  import { goto } from "@roxi/routify";
+  import { isLoggedIn } from "../../store.js";
+  import { get } from "svelte/store";
+
+  // If not logged in
+  let loggedIn = get(isLoggedIn);
+  isLoggedIn.subscribe((val) => {
+    loggedIn = val;
+  })
+  $: {
+        if (!loggedIn) {
+        $goto("/")
+      }
+    }
 
   let ble_beacons = [];
   let isLoading = false;

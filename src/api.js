@@ -28,7 +28,7 @@ api.create_beacon = async function create_beacon(id, name, txPower, x, y, z) {
   };
   let error = undefined;
   let data = undefined;
-  await axios.post(api_url, {id, name, txPower, x, y, z})
+  await axios.post(api_url, {id, name, txPower, x, y, z, token: localStorage.getItem("auth_token")})
   .then((res) => {
     data = res.data;
   })
@@ -43,7 +43,7 @@ api.update_beacon = async function update_beacon(newData) {
   const api_url = `${api.URL}beacon`;
   let error = undefined;
   let data = undefined;
-  await axios.patch(api_url, newData)
+  await axios.patch(api_url, {...newData, token: localStorage.getItem("auth_token")})
   .then((res) => {
     data = res.data;
   })
@@ -71,7 +71,7 @@ api.update_beacon_content = async function update_beacon_content(id, content) {
   const api_url = `${api.URL}content`;
   let error = undefined;
   let data = undefined;
-  await axios.patch(api_url, {id: id, content: content})
+  await axios.patch(api_url, {id: id, content: content, token: localStorage.getItem("auth_token")})
   .then((res) => {
     data = res.data
   })
@@ -99,7 +99,7 @@ api.create_device = async function create_device(id, name, txPower) {
   const api_url = `${api.URL}device`;
   let error = undefined;
   let data = undefined;
-  await axios.post(api_url, {id, name, txPower})
+  await axios.post(api_url, {id, name, txPower, token: localStorage.getItem("auth_token")})
   .then((res) => {
     data = res.data;
   })
@@ -141,7 +141,7 @@ api.login = async function login(username_or_token, password) {
   const api_url = `${api.URL}login`;
   let error = undefined;
   let data = undefined;
-  await axios.get({username_or_token, password})
+  await axios.get(api_url, {params: {username_or_token, password}})
   .then((res) => {
     data = res.data;
   })
