@@ -39,13 +39,13 @@
         beaconToShow = (beaconsInRange.length > 0) ? beaconsInRange[0] : undefined;
         if (beaconToShow) {
             beaconToShow = $beacons.filter((beacon) => beacon.id == beaconToShow.id)[0]
-            console.log(!beaconContent[beaconToShow.id])
+            // console.log(!beaconContent[beaconToShow.id])
             if (!beaconContent[beaconToShow.id] && !isLoading) {
                 getBeaconContent(beaconToShow?.id);
-                console.log({beaconContent})
+                // console.log({beaconContent})
             }
         }
-        console.log(beaconToShow)
+        // console.log(beaconToShow)
         
     }
 
@@ -58,22 +58,23 @@
 
 
 <h1 bind:this={topDiv} class="font-bold text-center text-2xl my-2">Advertisements</h1>
-{#if isLoading}
-    <div class="flex flex-col items-center justify-center w-full my-4">
-        <span class="loading loading-spinner loading-lg mb-2"></span>
-    </div>
-{:else if isError}
-    <div class="w-full bg-error border border-black dark:border-white m-4 p-2 text-center rounded-lg">
-        <p class="text-black font-bold">Error!</p>
-        <p class="text-black">Failed to Fetch Content for Beacon with ID: {beaconToShow?.id}</p>
-    </div>
-{/if}
+
 {#if beaconToShow}
     <p class="text-center">
-        Project ID: {beaconToShow.id}
+        ID: {beaconToShow.id}
     </p>
+    {#if isLoading}
+        <div class="flex flex-col items-center justify-center w-full my-4">
+            <span class="loading loading-spinner loading-lg mb-2"></span>
+        </div>
+    {:else if isError}
+        <div class="w-full bg-error border border-black dark:border-white m-4 p-2 text-center rounded-lg">
+            <p class="text-black font-bold">Error!</p>
+            <p class="text-black">Failed to Fetch Content for Beacon with ID: {beaconToShow?.id}</p>
+        </div>
+    {/if}
     <div class="m-4 p-4 bg-200-600 rounded-lg border border-black no-tailwindcss-base">
-        {@html beaconContent[beaconToShow.id]}
+        {@html beaconContent[beaconToShow.id] || 'Loading...'}
     </div>
 {:else}
     <div class="m-4 p-4 bg-200-600 rounded-lg border border-black no-tailwindcss-base">
