@@ -37,6 +37,11 @@ distanceWorker.onmessage = (e) => {
   // if (e.data.distanceVals) {
   //   testData.push(e.data.distanceVals);
   // }
+  if (e.data.is_print) {
+    navigator.clipboard.writeText(e.data.vals);
+    console.log(e.data.vals);
+    return
+  }
   distance.update((value) => {
     if (!value[e.data.id]) {
       value[e.data.id] = [];
@@ -99,7 +104,9 @@ if (!localStorage.getItem("ID")) {
 
 // Testing/Simulation Functions
 export const printTestData = () => {
-  console.log("Test Data: ", JSON.stringify(testData));
+  const stringData = JSON.stringify(testData);
+  navigator.clipboard.writeText(stringData);
+  console.log("Test Data: ", stringData);
 }
 
 function createNewBeacon(id, txPower, x, y, z) {
