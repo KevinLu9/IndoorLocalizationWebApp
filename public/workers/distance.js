@@ -123,7 +123,7 @@ onmessage = ({ data }) => {
     workerResult = { distance, kalman_distance, id: data.values.id, time: currentTime / 1000, x: bluetoothDataDict[data.values.id].x, y: bluetoothDataDict[data.values.id].y, distanceVals };
   
   } else if (data.command == "print") {
-    console.log({"time": bluetoothDataDict[data.id].time, "rssi":  bluetoothDataDict[data.id].rssi, "distance":  bluetoothDataDict[data.id].distance, "kalmanDistance":  bluetoothDataDict[data.id].kalmanDistance});
+    console.log(JSON.stringify({"time": bluetoothDataDict[data.id].time, "rssi":  bluetoothDataDict[data.id].rssi, "distance":  bluetoothDataDict[data.id].distance, "kalmanDistance":  bluetoothDataDict[data.id].kalmanDistance}));
 
   } else if (data.command == "device") {
     // If data is a device, add to bluetooth dict
