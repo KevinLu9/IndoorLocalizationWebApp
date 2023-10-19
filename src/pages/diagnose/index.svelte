@@ -238,6 +238,13 @@
       );
     });
   });
+
+  const printBeaconData = (id) => {
+    distanceWorker.postMessage({
+    command: "print",
+    id: id
+    });
+  };
 </script>
 
 <div>
@@ -254,7 +261,7 @@
     {/if}
   </div>
   {#each Object.entries(charts) as [id, beaconChart]}
-    <div class="w-full h-fit p-4">
+    <div class="w-full h-fit p-4 flex flex-col justify-center">
       <p class="font-bold w-full text-center">Beacon ID: {id}</p>
       <p class="w-full text-center">
         Raw: {beaconChart.latestDistance.toFixed(2)} m, Kalman: {beaconChart.latestKalmanDistance.toFixed(
@@ -262,6 +269,7 @@
         )} m
       </p>
       <canvas class="" id={beaconChart.id} />
+      <button class="btn btn-neutral" on:click={() => {printBeaconData(id)}}>CONSOLE LOG BEACON DATA</button>
     </div>
   {/each}
 </div>
