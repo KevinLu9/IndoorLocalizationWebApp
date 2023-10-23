@@ -36,7 +36,7 @@
             return {id: key, distance: value[value.length - 1]};
         })
 
-        beaconsInRange = distances.filter((beacon) =>  beacon.distance < 1).sort((a, b) => a.distance - b.distance)
+        beaconsInRange = distances.filter((beacon) =>  beacon.distance < 3).sort((a, b) => a.distance - b.distance)
         beaconToShow = (beaconsInRange.length > 0) ? beaconsInRange[0] : undefined;
         if (beaconToShow) {
             beaconToShow = $beacons.filter((beacon) => beacon.id == beaconToShow.id)[0]
