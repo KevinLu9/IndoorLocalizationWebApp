@@ -26,7 +26,8 @@
         ["/", "Home"],
         ["/about", "About"],
         ["/diagnose", "Diagnose"],
-        ["/setup", "Setup"]
+        ["/setup", "Setup"],
+        ["/data", "Data"]
       ];
     } else {
       links = [
@@ -116,7 +117,6 @@
                   class="flex flex-col justify-center btn font-bold pointer-events-none border-black bg-blue-700 rounded-lg"
                   on:click={() => {
                     drawerVal = !drawerVal;
-                    console.log("WUT");
                   }}
                 >
                   <p class="w-full text-center">

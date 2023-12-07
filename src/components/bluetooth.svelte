@@ -14,7 +14,7 @@
   import { url } from "@roxi/routify";
   import { distanceWorker, positionWorker } from "../store";
   import { api } from "../api";
-  import { beacons, isGlobalLoading, globalLoadingMessage } from "../store";
+  import { beacons, isGlobalLoading, globalLoadingMessage, rawData } from "../store";
 
   let clipboardClicked = false;
   let hasExperimentalFlagEnabled = null;
@@ -112,6 +112,7 @@
       this.averageRSSIBuffer = [];
       this.txPower = txPower;
       this.content = content;
+      this.hasBeenRead = false;
 
       // Set up Chart attributes
       this.chart = null;
@@ -209,7 +210,7 @@
 
   const fetchBeacons = () => {
     // get bluetooth beacons from api
-    
+
     api.get_beacon().then((res) => {
       // console.log("[BLUETOOTH] INITIAL BEACONS: ", res.data)
       // Retry setting error
@@ -229,6 +230,7 @@
           0,
           new Date().getTime()
         );
+        $rawData[beacon.id] = {id: beacon.id, rssi: [0], time: [new Date().getTime()], used: false};
         distanceWorker.postMessage({
           command: "device",
           values: {
@@ -242,7 +244,7 @@
       });
       isGlobalLoading.set(false);
     });
-  }
+  };
 
   onMount(() => {
     isGlobalLoading.set(true);
@@ -315,6 +317,11 @@
         bluetoothDataDict[manufacturerID].addTime(time);
         bluetoothDataDict[manufacturerID].addRSSI(event.rssi);
         bluetoothDataDict[manufacturerID].setTxPower(event.txPower);
+
+        $rawData[manufacturerID].rssi.push(event.rssi);
+        $rawData[manufacturerID].time.push(time);
+        $rawData[manufacturerID].used = false;
+
         distanceWorker.postMessage({
           command: "rssi",
           values: { id: manufacturerID, time: time, rssi: event.rssi },
@@ -332,6 +339,9 @@
           event.rssi,
           new Date().getTime()
         );
+        console.log("ASJKLDH")
+        $rawData[manufacturerID] = {id: manufacturerID, rssi: [event.rssi], time: [new Date().getTime], used: false};
+        
         api
           .create_beacon(
             manufacturerID,

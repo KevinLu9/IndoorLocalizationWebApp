@@ -19,6 +19,8 @@ export const positionWorker = new Worker("workers/position.js");
 export const globalLoadingMessage = writable("");
 export const isGlobalLoading = writable(true);
 export const isLoggedIn = writable(false);
+export const dataCollection = writable([]);
+export const rawData = writable({});
 
 const testData = []; // Keep track of all points
 const initialTime = new Date().getTime() / 1000;
