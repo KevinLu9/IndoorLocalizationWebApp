@@ -58,6 +58,11 @@
           data: [],
           backgroundColor: "rgba(0, 0, 255, 0.5)",
         },
+        {
+          label: "Other User Locations",
+          data: [{x: 2, y: 2}],
+          backgroundColor: "rgb(0, 255, 255)",
+        }
       ],
     };
 
