@@ -3,6 +3,39 @@
   import { rawData, dataCollection } from "../../store.js"
   
   let isLogging = false;
+  let kalmanDataString = "";
+
+  class KalmanFilter {
+    constructor(meas_uncertainty, est_uncertainty, q, cur_est = 0) {
+        /**
+         * Represents a Bluetooth Beacon and its properties
+         * @param {*} meas_uncertainty : measurement uncertainty
+         * @param {*} est_uncertainty  : estimate uncertainty
+         * @param {*} q : process noise
+         */
+        this.meas_uncertainty = meas_uncertainty;
+        this.est_uncertainty = est_uncertainty;
+        this.q = q;
+        this.prev_est = undefined;
+        this.cur_est = cur_est;
+        this.kalman_gain = 0;
+    }
+    calculateKalman(meas) {
+        // meas: is the new value.
+        if (this.prev_est == undefined) {
+            this.prev_est = meas;
+            this.cur_est = meas;
+            return this.cur_est;
+        }
+        // Kalman steps
+        this.kal_gain = this.est_uncertainty / (this.est_uncertainty + this.meas_uncertainty); // compute kalman gain
+        // console.log('kalman gain: ', this.kal_gain);
+        this.cur_est = this.prev_est + this.kal_gain * (meas - this.prev_est); // compute estimate for current time step
+        this.est_uncertainty = (1 - this.kal_gain) * this.est_uncertainty + Math.abs(this.prev_est - this.cur_est) * this.q; // update estimate uncertainty
+        this.prev_est = this.cur_est; // update previous estimate for next loop iteration
+        return this.cur_est;
+    }
+}
 
   const sleep = ms => new Promise(res => setTimeout(res, ms));
   const startLogging = async () => {
@@ -36,6 +69,32 @@
   const copyData = () => {
     const stringData = JSON.stringify($dataCollection);
     navigator.clipboard.writeText(stringData);
+  }
+
+  const filterData = () => {
+    let kFilter1 = new KalmanFilter(0.5, 0.5, 0.05);
+    let kFilter2 = new KalmanFilter(0.5, 0.5, 0.05);
+    let kFilter3 = new KalmanFilter(0.5, 0.5, 0.05);
+    let kFilter4 = new KalmanFilter(0.5, 0.5, 0.05);
+    let data = JSON.parse(kalmanDataString);
+    let res = [];
+    for (let d of data) {
+      let val = {}
+      if (d["01"]) {
+        val["01"] = kFilter1.calculateKalman(d["01"])
+      }
+      if (d["02"]) {
+        val["02"] = kFilter1.calculateKalman(d["02"])
+      }
+      if (d["03"]) {
+        val["03"] = kFilter1.calculateKalman(d["03"])
+      }
+      if (d["04"]) {
+        val["04"] = kFilter1.calculateKalman(d["04"])
+      }
+      res.push(val);
+    }
+    navigator.clipboard.writeText(JSON.stringify(res));
   }
 
   $: {
@@ -127,6 +186,12 @@
         <p class="text-center">NO DEVICES FOUND</p>
       {/if}
     </ul>
+  </div>
+
+  <div class="flex items-center gap-4 w-full">
+    <p class="font-bold">Kalman Filter Data String</p>
+    <input bind:value={kalmanDataString} class="input input-bordered outline outline-base-200" />
+    <button class="btn btn-primary" on:click={filterData}>Submit</button>
   </div>
   
 </div>

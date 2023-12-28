@@ -60,7 +60,8 @@
         },
         {
           label: "Other User Locations",
-          data: [{x: 2, y: 2}],
+          data: [],
+          // data: [{x: 0, y: 0}],
           backgroundColor: "rgb(0, 255, 255)",
         }
       ],
