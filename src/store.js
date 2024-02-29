@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-export const location = writable({ x: 0, y: 0 });
+export const location = writable({ x: 5, y: 1 });
 export const previousLocations = writable([]);
 
 export const updateLocation = (loc) => {

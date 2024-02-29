@@ -56,12 +56,15 @@
         {
           label: "Beacon Locations",
           data: [],
-          backgroundColor: "rgba(0, 0, 255, 0.5)",
+          // backgroundColor: "rgba(0, 0, 255, 0.5)",
+          pointStyle: 'crossRot',
+          pointRadius: 8,
+          pointBorderColor: 'rgb(0, 0, 255)',
         },
         {
           label: "Other User Locations",
           data: [],
-          // data: [{x: 0, y: 0}],
+          data: [{x: 2, y: 2}],
           backgroundColor: "rgb(0, 255, 255)",
         }
       ],
